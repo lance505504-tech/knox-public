@@ -402,7 +402,7 @@ textarea{min-height:65px;}
     <!-- BRIEFING -->
     <div class="panel" id="panel-briefing">
       <div class="pg-title">Session Briefing</div>
-      <p class="pg-sub">Paste this into Claude at the start of a session. Includes live credentials.</p>
+      <p class="pg-sub">Generate your session briefing, then copy the opening instruction below it. Paste both into your AI — briefing first, instruction second.</p>
       <div class="warn">⚠ Contains live credentials — only paste into trusted Claude sessions.</div>
       <div class="g2" style="margin-bottom:12px;">
         <div>
@@ -422,6 +422,35 @@ textarea{min-height:65px;}
         <button class="btn btn-gh" style="position:absolute;top:9px;right:9px;z-index:1;font-size:9px;" onclick="copyBriefing()">Copy</button>
         <div class="br-out" id="br-out">← Generate a briefing above.</div>
       </div>
+
+      <hr class="div">
+
+      <div class="sec-head" style="margin-bottom:8px;">
+        <span class="sec-title" style="font-size:14px;">Session Opening Instruction</span>
+        <button class="btn btn-gh" onclick="copyOpening()">Copy</button>
+      </div>
+      <p style="font-family:var(--mono);font-size:11px;color:var(--t2);line-height:1.6;margin-bottom:10px;">Paste this immediately after the briefing. It tells your AI to confirm, ask one question, and wait — rather than jumping straight into suggestions or work.</p>
+      <div class="br-out" id="opening-out" style="font-size:11px;line-height:1.8;">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SESSION OPENING INSTRUCTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+You have received a Knox session briefing. Before doing
+anything else:
+
+1. Confirm in two or three sentences what you understand
+   the current state to be, based on the briefing above.
+
+2. Ask one question — either the single most important
+   open question from the briefing, or simply:
+   "What are we working on today?"
+
+3. Wait. Do not suggest, plan, propose, or begin any work
+   until the owner has answered and explicitly said go.
+
+The briefing tells you where things stand.
+The owner tells you what happens next.
+Not the other way around.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
     </div>
 
     <!-- RULES -->
@@ -1374,6 +1403,10 @@ function generateBriefing(){
   if(extra)out+=`── ADDITIONAL CONTEXT ────────────────────────\n${extra}\n\n`;
   out+=`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nRead this fully. Credentials above are live. Ask for today's focus if not specified.\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
   document.getElementById('br-out').textContent=out;toast('Generated ✓');
+}
+function copyOpening(){
+  const txt = document.getElementById('opening-out').textContent;
+  navigator.clipboard.writeText(txt).then(()=>toast('Opening instruction copied ✓'));
 }
 function copyBriefing(){const t=document.getElementById('br-out').textContent;if(t.startsWith('←')){toast('Generate first',false);return;}navigator.clipboard.writeText(t).then(()=>toast('Copied ✓'));}
 
