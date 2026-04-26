@@ -459,11 +459,89 @@ textarea{min-height:65px;}
       </div>
 
       <hr class="div">
-      <div class="sec-title" style="margin-bottom:10px;">EmailJS (for PIN reset)</div>
+      <div class="sec-title" style="margin-bottom:10px;">PIN Reset Emails</div>
+      <p style="font-size:11px;color:var(--t2);font-family:var(--mono);line-height:1.7;margin-bottom:14px;">Knox sends PIN reset codes by email using <strong style="color:var(--t);">EmailJS</strong> — a free service that lets websites send email without a server. Setup takes about 5 minutes and is free for up to 200 emails/month.</p>
+
+      <!-- Step by step guide -->
+      <div style="display:flex;flex-direction:column;gap:3px;margin-bottom:16px;">
+
+        <!-- Step 1 -->
+        <details style="background:var(--s2);border:1px solid var(--b1);border-radius:var(--rad);overflow:hidden;">
+          <summary style="padding:10px 13px;cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;">
+            <span style="width:20px;height:20px;background:var(--gd);border:1px solid rgba(90,255,71,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--g);flex-shrink:0;font-family:var(--mono);">1</span>
+            Create a free EmailJS account
+            <span style="margin-left:auto;font-size:10px;color:var(--t3);font-weight:400;">emailjs.com</span>
+          </summary>
+          <div style="padding:12px 13px 14px;border-top:1px solid var(--b1);font-family:var(--mono);font-size:11px;color:var(--t2);line-height:1.8;">
+            <a href="https://www.emailjs.com/docs/tutorial/overview/" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;background:var(--gd);border:1px solid rgba(90,255,71,0.25);border-radius:var(--rad);color:var(--g);text-decoration:none;font-size:11px;margin-bottom:10px;">→ Go to emailjs.com and sign up free</a>
+            <p>The free plan gives you 200 emails/month — more than enough for PIN resets. No credit card required.</p>
+          </div>
+        </details>
+
+        <!-- Step 2 -->
+        <details style="background:var(--s2);border:1px solid var(--b1);border-radius:var(--rad);overflow:hidden;">
+          <summary style="padding:10px 13px;cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;">
+            <span style="width:20px;height:20px;background:var(--gd);border:1px solid rgba(90,255,71,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--g);flex-shrink:0;font-family:var(--mono);">2</span>
+            Add an email service
+            <span style="margin-left:auto;font-size:10px;color:var(--t3);font-weight:400;">Dashboard → Email Services</span>
+          </summary>
+          <div style="padding:12px 13px 14px;border-top:1px solid var(--b1);font-family:var(--mono);font-size:11px;color:var(--t2);line-height:1.8;">
+            <a href="https://dashboard.emailjs.com/admin" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;background:var(--gd);border:1px solid rgba(90,255,71,0.25);border-radius:var(--rad);color:var(--g);text-decoration:none;font-size:11px;margin-bottom:10px;">→ Open EmailJS Dashboard</a>
+            <p>Click <strong style="color:var(--t);">Email Services → Add New Service</strong>. Choose Gmail, Outlook, or any provider you use. Follow the prompts to connect your email account.</p>
+            <p style="margin-top:6px;">Once connected, copy your <strong style="color:var(--t);">Service ID</strong> — it looks like <code style="background:var(--s3);padding:1px 5px;border-radius:3px;color:var(--bl);">service_xxxxxxx</code></p>
+          </div>
+        </details>
+
+        <!-- Step 3 -->
+        <details style="background:var(--s2);border:1px solid var(--b1);border-radius:var(--rad);overflow:hidden;">
+          <summary style="padding:10px 13px;cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;">
+            <span style="width:20px;height:20px;background:var(--gd);border:1px solid rgba(90,255,71,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--g);flex-shrink:0;font-family:var(--mono);">3</span>
+            Create the Knox reset template
+            <span style="margin-left:auto;font-size:10px;color:var(--t3);font-weight:400;">Dashboard → Email Templates</span>
+          </summary>
+          <div style="padding:12px 13px 14px;border-top:1px solid var(--b1);font-family:var(--mono);font-size:11px;color:var(--t2);line-height:1.8;">
+            <a href="https://dashboard.emailjs.com/admin/templates" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;background:var(--gd);border:1px solid rgba(90,255,71,0.25);border-radius:var(--rad);color:var(--g);text-decoration:none;font-size:11px;margin-bottom:10px;">→ Go to Email Templates</a>
+            <p>Click <strong style="color:var(--t);">Create New Template</strong>. Then:</p>
+            <p style="margin-top:6px;">1. Set <strong style="color:var(--t);">Subject</strong> to: <code style="background:var(--s3);padding:1px 5px;border-radius:3px;color:var(--bl);">Knox PIN reset</code></p>
+            <p style="margin-top:4px;">2. Set <strong style="color:var(--t);">To Email</strong> (right panel) to: <code style="background:var(--s3);padding:1px 5px;border-radius:3px;color:var(--bl);">{{to_email}}</code></p>
+            <p style="margin-top:4px;">3. Click <strong style="color:var(--t);">Edit Content → HTML view</strong> and paste this exactly:</p>
+            <div style="position:relative;margin-top:8px;">
+              <button onclick="copyTemplate()" style="position:absolute;top:6px;right:6px;background:var(--s4);border:1px solid var(--b2);color:var(--t2);padding:3px 8px;border-radius:3px;font-size:9px;cursor:pointer;font-family:var(--mono);">Copy</button>
+              <pre id="ejs-template-code" style="background:var(--s3);border:1px solid var(--b2);border-radius:var(--rad);padding:10px 10px 10px 10px;overflow-x:auto;font-size:10px;color:var(--t2);line-height:1.6;white-space:pre-wrap;">&lt;div style="font-family:system-ui,sans-serif;font-size:14px;color:#2c3e50;max-width:480px;"&gt;
+  &lt;p&gt;A PIN reset has been requested for your Knox vault.&lt;/p&gt;
+  &lt;div style="margin:24px 0;padding:24px;background:#f0f7ff;border-radius:8px;text-align:center;"&gt;
+    &lt;div style="font-size:32px;margin-bottom:12px;"&gt;&#x1F510;&lt;/div&gt;
+    &lt;div style="font-size:13px;color:#888;margin-bottom:8px;"&gt;Your reset code&lt;/div&gt;
+    &lt;div style="font-size:36px;font-weight:bold;letter-spacing:10px;color:#2c3e50;"&gt;{{code}}&lt;/div&gt;
+    &lt;div style="font-size:12px;color:#aaa;margin-top:12px;"&gt;Expires in 15 minutes&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;p style="font-size:12px;color:#aaa;"&gt;If you didn&apos;t request this, ignore this email. Your PIN has not changed.&lt;/p&gt;
+&lt;/div&gt;</pre>
+            </div>
+            <p style="margin-top:8px;">4. Save the template and copy the <strong style="color:var(--t);">Template ID</strong> — it looks like <code style="background:var(--s3);padding:1px 5px;border-radius:3px;color:var(--bl);">template_xxxxxxx</code></p>
+          </div>
+        </details>
+
+        <!-- Step 4 -->
+        <details style="background:var(--s2);border:1px solid var(--b1);border-radius:var(--rad);overflow:hidden;">
+          <summary style="padding:10px 13px;cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;">
+            <span style="width:20px;height:20px;background:var(--gd);border:1px solid rgba(90,255,71,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--g);flex-shrink:0;font-family:var(--mono);">4</span>
+            Get your Public Key and paste everything below
+            <span style="margin-left:auto;font-size:10px;color:var(--t3);font-weight:400;">Account → API Keys</span>
+          </summary>
+          <div style="padding:12px 13px 14px;border-top:1px solid var(--b1);font-family:var(--mono);font-size:11px;color:var(--t2);line-height:1.8;">
+            <a href="https://dashboard.emailjs.com/admin/account" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;background:var(--gd);border:1px solid rgba(90,255,71,0.25);border-radius:var(--rad);color:var(--g);text-decoration:none;font-size:11px;margin-bottom:10px;">→ Go to Account → API Keys</a>
+            <p>Copy your <strong style="color:var(--t);">Public Key</strong> from the API Keys section. Then paste all three values into the fields below and you are done.</p>
+          </div>
+        </details>
+
+      </div>
+
+      <!-- The actual input fields -->
       <div class="field"><label>Service ID</label><input type="text" id="settings-ejs-service" placeholder="service_xxxxxxx" onblur="saveEmailJS()"></div>
-      <div class="field"><label>Template ID <span style="color:var(--t3);font-weight:400;">(leave blank to use default)</span></label><input type="text" id="settings-ejs-template" placeholder="template_xxxxxxx" onblur="saveEmailJS()"></div>
+      <div class="field"><label>Template ID</label><input type="text" id="settings-ejs-template" placeholder="template_xxxxxxx" onblur="saveEmailJS()"></div>
       <div class="field"><label>Public Key</label><input type="text" id="settings-ejs-key" placeholder="your_public_key" onblur="saveEmailJS()"></div>
-      <div class="info" style="margin-top:4px;">Knox sends reset codes via EmailJS. The template should include a <code>{{code}}</code> variable. <a href="https://www.emailjs.com" target="_blank" style="color:var(--bl);">emailjs.com</a></div>
+      <div id="ejs-status" style="font-family:var(--mono);font-size:11px;color:var(--g);margin-top:6px;display:none;">✓ EmailJS configured — PIN reset emails are active</div>
 
       <hr class="div">
       <div class="sec-title" style="margin-bottom:10px;">Data</div>
@@ -808,6 +886,8 @@ function openApp(){
   document.getElementById('settings-ejs-service').value=CFG.ejsService||'';
   document.getElementById('settings-ejs-template').value=CFG.ejsTemplate||'';
   document.getElementById('settings-ejs-key').value=CFG.ejsKey||'';
+  const ejsSt=document.getElementById('ejs-status');
+  if(ejsSt){ejsSt.style.display=(CFG.ejsService&&CFG.ejsTemplate&&CFG.ejsKey)?'block':'none';}
 }
 
 function lockApp(){
@@ -830,11 +910,19 @@ function changeEmail(){
   const e=prompt('Enter new recovery email:',CFG.email);
   if(e&&e.trim()){CFG.email=e.trim();saveCFG();document.getElementById('settings-email-display').textContent=CFG.email;toast('Email updated ✓');}
 }
+function copyTemplate(){
+  const code = document.getElementById('ejs-template-code').textContent;
+  // Decode HTML entities for clipboard
+  const txt = code.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&').replace(/&apos;/g,"'").replace(/&#x1F510;/g,'🔐');
+  navigator.clipboard.writeText(txt).then(()=>toast('Template HTML copied ✓'));
+}
 function saveEmailJS(){
   CFG.ejsService=document.getElementById('settings-ejs-service').value.trim();
   CFG.ejsTemplate=document.getElementById('settings-ejs-template').value.trim();
   CFG.ejsKey=document.getElementById('settings-ejs-key').value.trim();
   saveCFG();
+  const status=document.getElementById('ejs-status');
+  if(status){status.style.display=(CFG.ejsService&&CFG.ejsTemplate&&CFG.ejsKey)?'block':'none';}
 }
 function clearAll(){
   if(!confirm('Clear ALL Knox data on this device?'))return;
