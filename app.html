@@ -471,9 +471,9 @@ Not the other way around.
 
       <hr class="div">
       <div class="sec-title" style="margin-bottom:10px;">PIN</div>
-      <div class="setting-row">
-        <div><div class="setting-label">Change PIN</div><div class="setting-desc">Set a new unlock PIN</div></div>
-        <button class="btn btn-gh" onclick="startChangePin()">Change PIN</button>
+      <div class="setting-row" id="pin-setting-row">
+        <div><div class="setting-label" id="pin-setting-label">PIN Protection</div><div class="setting-desc" id="pin-setting-desc">No PIN set — Knox opens without one</div></div>
+        <button class="btn btn-gh" id="pin-setting-btn" onclick="startChangePin()">Set PIN</button>
       </div>
 
       <hr class="div">
@@ -865,7 +865,39 @@ function startChangePin(){
   document.getElementById('pin-screen').style.display='flex';
   document.getElementById('app').classList.remove('on');
   showStep('step-newpin');
-  updateDots('newpin-dots','');
+  buildNumpad('newpin-numpad','newpin-dots',
+    d=>{pinBuffer+=d;updateDots('newpin-dots',pinBuffer);if(pinBuffer.length===6)setTimeout(submitNewPin,120);},
+    ()=>{pinBuffer=pinBuffer.slice(0,-1);updateDots('newpin-dots',pinBuffer);},
+    submitNewPin,'newpin-err');
+}
+
+function submitNewPin(){
+  if(pinBuffer.length<4){document.getElementById('newpin-err').textContent='PIN must be at least 4 digits.';return;}
+  pinFirst=pinBuffer;pinBuffer='';pinMode='newpin-confirm';
+  showStep('step-newpin-confirm');
+  buildNumpad('newpin-confirm-numpad','newpin-confirm-dots',
+    d=>{pinBuffer+=d;updateDots('newpin-confirm-dots',pinBuffer);if(pinBuffer.length===6)setTimeout(submitNewPinConfirm,120);},
+    ()=>{pinBuffer=pinBuffer.slice(0,-1);updateDots('newpin-confirm-dots',pinBuffer);},
+    submitNewPinConfirm,'newpin-confirm-err');
+}
+
+function submitNewPinConfirm(){
+  if(pinBuffer!==pinFirst){
+    document.getElementById('newpin-confirm-err').textContent='PINs did not match. Try again.';
+    pinBuffer='';pinFirst='';pinMode='newpin';
+    showStep('step-newpin');
+    buildNumpad('newpin-numpad','newpin-dots',
+      d=>{pinBuffer+=d;updateDots('newpin-dots',pinBuffer);if(pinBuffer.length===6)setTimeout(submitNewPin,120);},
+      ()=>{pinBuffer=pinBuffer.slice(0,-1);updateDots('newpin-dots',pinBuffer);},
+      submitNewPin,'newpin-err');
+    return;
+  }
+  CFG.pin=pinBuffer;saveCFG();
+  document.getElementById('pin-screen').style.display='none';
+  document.getElementById('app').classList.add('on');
+  document.getElementById('lock-btn').style.display='';
+  toast('PIN set ✓');
+  pinBuffer='';pinFirst='';
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -911,6 +943,23 @@ function openApp(){
   // Populate settings
   document.getElementById('settings-name-display').textContent=CFG.name||'—';
   document.getElementById('settings-email-display').textContent=CFG.email||'—';
+  // Update PIN setting label
+  const pinLabel=document.getElementById('pin-setting-label');
+  const pinDesc=document.getElementById('pin-setting-desc');
+  const pinBtn=document.getElementById('pin-setting-btn');
+  if(pinLabel&&pinDesc&&pinBtn){
+    if(CFG.pin){
+      pinLabel.textContent='PIN enabled';
+      pinDesc.textContent='Knox is PIN protected';
+      pinBtn.textContent='Change PIN';
+    } else {
+      pinLabel.textContent='PIN Protection';
+      pinDesc.textContent='No PIN set — Knox opens without one';
+      pinBtn.textContent='Set PIN';
+    }
+  }
+  const lockBtn=document.getElementById('lock-btn');
+  if(lockBtn) lockBtn.style.display=CFG.pin?'':'none';
   document.getElementById('settings-ejs-service').value=CFG.ejsService||'';
   document.getElementById('settings-ejs-template').value=CFG.ejsTemplate||'';
   document.getElementById('settings-ejs-key').value=CFG.ejsKey||'';
