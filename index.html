@@ -110,7 +110,7 @@ nav {
 .demo-body {
   padding: 18px 20px;
   font-family: var(--mono); font-size: 11px; line-height: 1.9;
-  color: var(--t2); white-space: pre;
+  color: var(--t2); white-space: pre-wrap; overflow-x: auto;
 }
 .demo-body .kw { color: var(--g); }
 .demo-body .dim { color: var(--t3); }
@@ -282,7 +282,7 @@ details summary span { display: inline-block; transition: transform 0.2s; }
   <a href="#faq" style="font-family:var(--mono);font-size:12px;color:var(--t3);text-decoration:none;margin-bottom:48px;display:inline-block;transition:color 0.15s;" onmouseover="this.style.color='var(--t2)'" onmouseout="this.style.color='var(--t3)'">Not sure which? → See FAQ</a>
 
 <!-- BRIEFING DEMO -->
-  <div class="briefing-demo">
+  <div class="briefing-demo" style="max-width:100%;overflow:hidden;">
     <div class="demo-bar">
       <div class="demo-dot" style="background:#ff5f57"></div>
       <div class="demo-dot" style="background:#febc2e"></div>
@@ -352,7 +352,7 @@ details summary span { display: inline-block; transition: transform 0.2s; }
     <h2 class="section-title">If you use AI for real work,<br>Knox is for you.</h2>
     <p class="section-sub">Knox is not just for developers. Anyone who uses an AI assistant regularly loses time re-explaining themselves. Knox solves that for all of them.</p>
 
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:40px;">
+    <div class="who-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:40px;">
       <div style="background:var(--s1);border:1px solid var(--b1);border-radius:8px;padding:20px;">
         <div style="font-size:22px;margin-bottom:10px;">💼</div>
         <div style="font-size:13px;font-weight:700;margin-bottom:6px;">Business owners &amp; managers</div>
