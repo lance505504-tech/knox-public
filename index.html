@@ -202,6 +202,25 @@ footer {
 
 details[open] summary span { transform: rotate(45deg); display: inline-block; transition: transform 0.2s; }
 details summary span { display: inline-block; transition: transform 0.2s; }
+
+  /* version picker */
+  .version-picker {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    max-width: 580px;
+    width: 100%;
+    margin: 0 auto 20px;
+    padding: 0 16px;
+    box-sizing: border-box;
+  }
+  @media (max-width: 560px) {
+    .version-picker {
+      grid-template-columns: 1fr;
+      max-width: 400px;
+      padding: 0 16px;
+    }
+  }
 </style>
 </head>
 <body>
@@ -228,7 +247,7 @@ details summary span { display: inline-block; transition: transform 0.2s; }
   <p style="font-family:var(--mono);font-size:clamp(11px,1.5vw,13px);color:var(--t3);margin-bottom:40px;">Stop re-explaining yourself. Paste one briefing. Your AI picks up exactly where you left off.</p>
 
   <!-- Version cards — the hero -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:580px;width:100%;margin:0 auto 20px;" class="version-picker">
+  <div class="version-picker">
 
     <!-- Knox Easy -->
     <div style="background:var(--s1);border:2px solid rgba(90,255,71,0.35);border-radius:10px;padding:24px 20px;display:flex;flex-direction:column;gap:10px;text-align:left;">
