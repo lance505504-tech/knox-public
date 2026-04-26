@@ -78,7 +78,14 @@ Without EmailJS, forgotten PINs require clearing Knox and re-importing from a ba
 
 ## Open source
 
-Knox is MIT licensed. Free to use, modify, fork, and distribute. Attribution appreciated but not required. If you build something useful with it, consider sharing it back.
+Knox is licensed under **Creative Commons CC BY-NC 4.0**. Free to use, modify, and share for personal and team use. Commercial use requires permission.
+
+- ✓ Use it for your own work and projects
+- ✓ Modify and adapt it
+- ✓ Share it with others
+- ✗ Sell it or incorporate into a commercial product without permission
+
+For commercial licensing: lance505504@gmail.com
 
 See [LICENSE](./LICENSE) for the full licence text.
 
