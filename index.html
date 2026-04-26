@@ -194,6 +194,9 @@ footer {
   .hero { padding: 80px 16px 40px; }
   section { padding: 60px 16px; }
 }
+
+details[open] summary span { transform: rotate(45deg); display: inline-block; transition: transform 0.2s; }
+details summary span { display: inline-block; transition: transform 0.2s; }
 </style>
 </head>
 <body>
@@ -463,6 +466,145 @@ footer {
   </div>
 </section>
 
+<!-- FAQ -->
+<section style="border-top:1px solid var(--b1);padding:80px 24px;position:relative;z-index:1;">
+  <div class="section-inner">
+    <div class="section-tag">FAQ</div>
+    <h2 class="section-title" style="margin-bottom:40px;">Questions people ask<br>before they try it.</h2>
+
+    <div style="display:flex;flex-direction:column;gap:3px;max-width:720px;">
+
+      <details style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--rad);overflow:hidden;">
+        <summary style="padding:14px 16px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;">
+          What does Knox actually do?
+          <span style="color:var(--g);font-size:16px;flex-shrink:0;margin-left:12px;">+</span>
+        </summary>
+        <div style="padding:0 16px 16px;font-family:var(--mono);font-size:12px;color:var(--t2);line-height:1.8;border-top:1px solid var(--b1);padding-top:14px;">
+          Knox gives your AI assistant a memory. Before each session you generate a briefing — a structured summary of your projects, decisions, rules, and context — and paste it in. Your AI reads it and picks up where you left off. The simplest way to find out if it works for you is to try it. Set up one project, generate a briefing, paste it into your next AI session, and see if the conversation feels different. Most people notice immediately.
+        </div>
+      </details>
+
+      <details style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--rad);overflow:hidden;">
+        <summary style="padding:14px 16px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;">
+          Will Knox solve all my AI memory problems?
+          <span style="color:var(--g);font-size:16px;flex-shrink:0;margin-left:12px;">+</span>
+        </summary>
+        <div style="padding:0 16px 16px;font-family:var(--mono);font-size:12px;color:var(--t2);line-height:1.8;border-top:1px solid var(--b1);padding-top:14px;">
+          Knox solves the briefing problem — your AI starts each session knowing your context. But AI assistants don't retain files between sessions, even in features like "Projects." For that you need a cloud drive or repository. The combination that works best is Knox for context and briefing, plus Google Drive, OneDrive, Dropbox, or a GitHub repo for actual files — and telling your AI where to find them. Knox Credential lets you store those service details so your AI knows exactly where to look.
+        </div>
+      </details>
+
+      <details style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--rad);overflow:hidden;">
+        <summary style="padding:14px 16px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;">
+          Is this really free?
+          <span style="color:var(--g);font-size:16px;flex-shrink:0;margin-left:12px;">+</span>
+        </summary>
+        <div style="padding:0 16px 16px;font-family:var(--mono);font-size:12px;color:var(--t2);line-height:1.8;border-top:1px solid var(--b1);padding-top:14px;">
+          Yes. Knox Easy and Knox Credential are both free to download and use. No subscription, no trial period, no credit card. Licensed under CC BY-NC 4.0 — free for personal and team use. The only restriction is you can't sell it or incorporate it into a commercial product without permission.
+        </div>
+      </details>
+
+      <details style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--rad);overflow:hidden;">
+        <summary style="padding:14px 16px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;">
+          Do I need to create an account?
+          <span style="color:var(--g);font-size:16px;flex-shrink:0;margin-left:12px;">+</span>
+        </summary>
+        <div style="padding:0 16px 16px;font-family:var(--mono);font-size:12px;color:var(--t2);line-height:1.8;border-top:1px solid var(--b1);padding-top:14px;">
+          No. Knox runs entirely in your browser. No accounts, no servers, no sign-up. Open the file, enter your name, you're in.
+        </div>
+      </details>
+
+      <details style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--rad);overflow:hidden;">
+        <summary style="padding:14px 16px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;">
+          Where is my data stored?
+          <span style="color:var(--g);font-size:16px;flex-shrink:0;margin-left:12px;">+</span>
+        </summary>
+        <div style="padding:0 16px 16px;font-family:var(--mono);font-size:12px;color:var(--t2);line-height:1.8;border-top:1px solid var(--b1);padding-top:14px;">
+          In your browser's localStorage — a private storage area on your device that no external service can access. Nothing is sent anywhere. If you clear your browser data, Knox data clears too — so export a backup regularly.
+        </div>
+      </details>
+
+      <details style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--rad);overflow:hidden;">
+        <summary style="padding:14px 16px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;">
+          What's the difference between Knox Easy and Knox Credential?
+          <span style="color:var(--g);font-size:16px;flex-shrink:0;margin-left:12px;">+</span>
+        </summary>
+        <div style="padding:0 16px 16px;font-family:var(--mono);font-size:12px;color:var(--t2);line-height:1.8;border-top:1px solid var(--b1);padding-top:14px;">
+          Knox Easy is session memory — projects, decisions, rules, briefing generator. It opens instantly with no setup. Knox Credential adds a full credential vault for storing API keys, service logins, and account details for services like Google Drive, GitHub, Supabase, and anything else you use. Start with Easy. Move to Credential if you need the vault.
+        </div>
+      </details>
+
+      <details style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--rad);overflow:hidden;">
+        <summary style="padding:14px 16px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;">
+          Does it work with ChatGPT, Gemini, Copilot — not just Claude?
+          <span style="color:var(--g);font-size:16px;flex-shrink:0;margin-left:12px;">+</span>
+        </summary>
+        <div style="padding:0 16px 16px;font-family:var(--mono);font-size:12px;color:var(--t2);line-height:1.8;border-top:1px solid var(--b1);padding-top:14px;">
+          Yes. Knox generates plain text. Any AI assistant that can read a message can use a Knox briefing. No integration, no plugin, no API key required. Switch between AI assistants freely — your briefing works with all of them.
+        </div>
+      </details>
+
+      <details style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--rad);overflow:hidden;">
+        <summary style="padding:14px 16px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;">
+          What if I forget my PIN?
+          <span style="color:var(--g);font-size:16px;flex-shrink:0;margin-left:12px;">+</span>
+        </summary>
+        <div style="padding:0 16px 16px;font-family:var(--mono);font-size:12px;color:var(--t2);line-height:1.8;border-top:1px solid var(--b1);padding-top:14px;">
+          Knox Easy: go to Settings and remove the PIN — opens without one. Knox Credential: use the PIN reset flow which sends a code to your registered email. Either way your data is safe — the PIN protects access, it doesn't encrypt the data.
+        </div>
+      </details>
+
+      <details style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--rad);overflow:hidden;">
+        <summary style="padding:14px 16px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;">
+          Can I share my vault with my team or family?
+          <span style="color:var(--g);font-size:16px;flex-shrink:0;margin-left:12px;">+</span>
+        </summary>
+        <div style="padding:0 16px 16px;font-family:var(--mono);font-size:12px;color:var(--t2);line-height:1.8;border-top:1px solid var(--b1);padding-top:14px;">
+          Yes. Export your vault as a JSON file and share it. The recipient imports it into their own Knox. Share the file via a trusted channel like Signal or WhatsApp rather than unprotected email — it contains your project data and, if using Knox Credential, your credentials.
+        </div>
+      </details>
+
+      <details style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--rad);overflow:hidden;">
+        <summary style="padding:14px 16px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;">
+          Can I self-host Knox?
+          <span style="color:var(--g);font-size:16px;flex-shrink:0;margin-left:12px;">+</span>
+        </summary>
+        <div style="padding:0 16px 16px;font-family:var(--mono);font-size:12px;color:var(--t2);line-height:1.8;border-top:1px solid var(--b1);padding-top:14px;">
+          Yes. Fork the repo on GitHub, deploy to Render, Netlify, Vercel, or any static host. No build step, no server required — just point it at the HTML file. Full instructions in the README.
+        </div>
+      </details>
+
+      <details style="background:var(--s1);border:1px solid var(--b1);border-radius:var(--rad);overflow:hidden;">
+        <summary style="padding:14px 16px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;">
+          I want to use Knox commercially. How do I get in touch?
+          <span style="color:var(--g);font-size:16px;flex-shrink:0;margin-left:12px;">+</span>
+        </summary>
+        <div style="padding:0 16px 16px;font-family:var(--mono);font-size:12px;color:var(--t2);line-height:1.8;border-top:1px solid var(--b1);padding-top:14px;">
+          Open a discussion on GitHub — <a href="https://github.com/lance505504-tech/knox-public/discussions" target="_blank" style="color:var(--g);">github.com/lance505504-tech/knox-public/discussions</a>. Start a topic in the Commercial category and we'll take it from there. CC BY-NC 4.0 covers personal and team use — commercial arrangements are handled case by case.
+        </div>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<!-- COMMUNITY -->
+<section style="background:var(--s1);border-top:1px solid var(--b1);border-bottom:1px solid var(--b1);padding:60px 24px;position:relative;z-index:1;">
+  <div class="section-inner" style="text-align:center;">
+    <div class="section-tag">Community</div>
+    <h2 class="section-title" style="margin-bottom:12px;">Questions, ideas, and help.</h2>
+    <p style="font-family:var(--mono);font-size:12px;color:var(--t2);line-height:1.8;max-width:480px;margin:0 auto 28px;">Knox is a small open project. If something isn't working, you have an idea, or you want to share how you're using it — the GitHub community is the place.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <a href="https://github.com/lance505504-tech/knox-public/discussions" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:11px 22px;background:var(--gd);border:1px solid rgba(90,255,71,0.25);border-radius:6px;font-family:var(--sans);font-size:13px;font-weight:700;color:var(--g);text-decoration:none;transition:background 0.15s;" onmouseover="this.style.background='rgba(90,255,71,0.15)'" onmouseout="this.style.background='var(--gd)'">
+        💬 Discussions — questions &amp; ideas
+      </a>
+      <a href="https://github.com/lance505504-tech/knox-public/issues" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:11px 22px;background:none;border:1px solid var(--b2);border-radius:6px;font-family:var(--sans);font-size:13px;font-weight:700;color:var(--t2);text-decoration:none;transition:all 0.15s;" onmouseover="this.style.color='var(--t)';this.style.borderColor='var(--b3)'" onmouseout="this.style.color='var(--t2)';this.style.borderColor='var(--b2)'">
+        🐛 Issues — bug reports
+      </a>
+    </div>
+  </div>
+</section>
+
 <!-- ORIGIN STORY -->
 <section style="border-top:1px solid var(--b1);padding:80px 24px;position:relative;z-index:1;">
   <div class="section-inner" style="max-width:720px;">
@@ -521,6 +663,7 @@ footer {
   <div class="footer-left">Knox — CC BY-NC 4.0 — built by Lance Adams — free for personal &amp; team use</div>
   <div class="footer-links">
     <a href="https://github.com/lance505504-tech/knox-public" target="_blank">GitHub</a>
+    <a href="https://github.com/lance505504-tech/knox-public/discussions" target="_blank">Discussions</a>
     <a href="easy.html">Knox Easy</a> &nbsp;<a href="app.html">Knox Credential</a>
     <a href="https://raw.githubusercontent.com/lance505504-tech/knox-public/main/app.html" download="knox.html">Download</a>
   </div>
