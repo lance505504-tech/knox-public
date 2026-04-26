@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Knox Easy — Remember Everything</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Syne:wght@500;700;800&display=swap');
+
+:root {
+  --bg:#080a09;--s1:#0f1210;--s2:#161a16;--s3:#1d221d;--s4:#242924;
+  --b1:#252b25;--b2:#303830;--b3:#3d463d;
+  --g:#5aff47;--gd:rgba(90,255,71,0.1);
+  --r:#ff4f4f;--y:#ffd24f;--bl:#4fb8ff;
+  --t:#e4ebe4;--t2:#8a988a;--t3:#4a544a;--t4:#2e342e;
+  --mono:'JetBrains Mono',monospace;--sans:'Syne',sans-serif;--rad:5px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--t);font-family:var(--mono);min-height:100vh;}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 50% -10%,rgba(90,255,71,0.05) 0%,transparent 65%);pointer-events:none;z-index:0;}
+
+/* ── FIRST RUN ── */
+#first-run{
+  position:fixed;inset:0;background:var(--bg);z-index:9999;
+  display:flex;align-items:center;justify-content:center;padding:24px;
+}
+.fr-card{
+  max-width:360px;width:100%;
+  background:var(--s1);border:1px solid var(--b2);
+  border-radius:12px;padding:32px;text-align:center;
+}
+.fr-logo{width:48px;height:48px;background:var(--gd);border:1px solid rgba(90,255,71,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto 16px;}
+.fr-title{font-family:var(--sans);font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;}
+.fr-title span{color:var(--g);}
+.fr-sub{font-size:11px;color:var(--t3);margin-bottom:24px;line-height:1.6;}
+.fr-input{width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:var(--rad);color:var(--t);font-family:var(--mono);font-size:14px;padding:11px 13px;outline:none;transition:border-color 0.15s;margin-bottom:12px;text-align:center;}
+.fr-input:focus{border-color:var(--g);}
+.fr-btn{width:100%;background:var(--g);color:#080a09;border:none;border-radius:var(--rad);font-family:var(--sans);font-size:13px;font-weight:700;padding:11px;cursor:pointer;transition:background 0.15s;}
+.fr-btn:hover{background:#7dff6e;}
+.fr-err{font-size:11px;color:var(--r);min-height:14px;margin-bottom:8px;}
+
+/* ── PIN SCREEN (optional) ── */
+#pin-screen{
+  position:fixed;inset:0;background:var(--bg);z-index:9000;
+  display:none;align-items:center;justify-content:center;padding:24px;
+}
+#pin-screen.on{display:flex;}
+.pin-card{max-width:320px;width:100%;background:var(--s1);border:1px solid var(--b2);border-radius:12px;padding:32px;text-align:center;}
+.pin-title{font-family:var(--sans);font-size:20px;font-weight:800;margin-bottom:6px;}
+.pin-title span{color:var(--g);}
+.pin-sub{font-size:11px;color:var(--t3);margin-bottom:20px;line-height:1.6;}
+.pin-dots{display:flex;gap:10px;justify-content:center;margin-bottom:18px;}
+.pin-dot{width:13px;height:13px;border-radius:50%;border:2px solid var(--b3);background:none;transition:all 0.12s;}
+.pin-dot.filled{background:var(--g);border-color:var(--g);}
+.pin-dot.error{background:var(--r);border-color:var(--r);animation:shake 0.3s;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px;}
+.npbtn{aspect-ratio:1;border-radius:7px;border:1px solid var(--b2);background:var(--s2);color:var(--t);font-family:var(--sans);font-size:17px;font-weight:700;cursor:pointer;transition:all 0.1s;display:flex;align-items:center;justify-content:center;}
+.npbtn:hover{background:var(--s3);border-color:var(--b3);}
+.npbtn:active{background:var(--s4);transform:scale(0.96);}
+.npbtn.go{background:var(--g);color:#080a09;border-color:var(--g);}
+.npbtn.go:hover{background:#7dff6e;}
+.pin-err{font-size:11px;color:var(--r);min-height:14px;margin-bottom:6px;}
+.pin-forgot{font-size:11px;color:var(--t3);cursor:pointer;transition:color 0.12s;}
+.pin-forgot:hover{color:var(--t2);}
+
+/* ── APP ── */
+#app{display:none;flex-direction:column;min-height:100vh;position:relative;z-index:1;}
+#app.on{display:flex;}
+
+header{display:flex;align-items:center;justify-content:space-between;padding:0 18px;height:50px;border-bottom:1px solid var(--b1);background:rgba(8,10,9,0.92);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100;flex-shrink:0;}
+.wordmark{display:flex;align-items:center;gap:8px;font-family:var(--sans);font-size:17px;font-weight:800;letter-spacing:-0.5px;}
+.wm-chip{background:var(--g);color:#080a09;border-radius:4px;padding:2px 7px;font-size:12px;font-weight:800;}
+.wm-easy{font-size:10px;color:var(--t3);font-family:var(--mono);margin-left:2px;}
+.hdr-r{display:flex;align-items:center;gap:7px;}
+.session-pill{display:flex;align-items:center;gap:5px;padding:4px 9px;background:var(--gd);border:1px solid rgba(90,255,71,0.18);border-radius:20px;font-size:10px;color:var(--g);}
+.s-dot{width:5px;height:5px;border-radius:50%;background:var(--g);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.hbtn{padding:4px 10px;background:none;border:1px solid var(--b2);border-radius:var(--rad);color:var(--t2);font-family:var(--mono);font-size:10px;cursor:pointer;transition:all 0.12s;}
+.hbtn:hover{color:var(--t);border-color:var(--b3);}
+.hbtn.red:hover{color:var(--r);border-color:rgba(255,79,79,0.3);}
+
+nav{display:flex;gap:2px;padding:9px 18px;border-bottom:1px solid var(--b1);background:var(--s1);overflow-x:auto;flex-shrink:0;}
+.nb{padding:5px 12px;background:none;border:1px solid transparent;border-radius:var(--rad);color:var(--t3);font-family:var(--mono);font-size:10px;cursor:pointer;white-space:nowrap;transition:all 0.12s;}
+.nb:hover{color:var(--t2);}
+.nb.on{color:var(--g);background:var(--gd);border-color:rgba(90,255,71,0.2);}
+
+main{flex:1;padding:18px;max-width:1100px;width:100%;margin:0 auto;}
+.panel{display:none;animation:fi 0.18s ease;}
+.panel.on{display:block;}
+@keyframes fi{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px;}
+@media(max-width:500px){.stat-row{grid-template-columns:repeat(3,1fr);}}
+.stat{background:var(--s2);border:1px solid var(--b1);border-radius:6px;padding:12px;text-align:center;}
+.stat-n{font-family:var(--sans);font-size:26px;font-weight:800;color:var(--g);letter-spacing:-1px;line-height:1;}
+.stat-l{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-top:3px;}
+
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:7px;padding:16px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:700px){.g2{grid-template-columns:1fr;}}
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;}
+.sec-title{font-family:var(--sans);font-size:14px;font-weight:700;}
+.pg-title{font-family:var(--sans);font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:3px;}
+.pg-sub{font-size:11px;color:var(--t3);margin-bottom:18px;line-height:1.6;}
+
+.bdg{display:inline-flex;align-items:center;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;}
+.bg{background:rgba(90,255,71,0.1);color:var(--g);}
+.br{background:rgba(255,79,79,0.1);color:var(--r);}
+.by{background:rgba(255,210,79,0.1);color:var(--y);}
+.bb{background:rgba(79,184,255,0.1);color:var(--bl);}
+.bgr{background:var(--s3);color:var(--t3);}
+
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:var(--rad);font-family:var(--mono);font-size:10px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:all 0.12s;white-space:nowrap;}
+.btn-p{background:var(--g);color:#080a09;border-color:var(--g);}
+.btn-p:hover{background:#7dff6e;}
+.btn-gh{background:none;color:var(--t2);border-color:var(--b2);}
+.btn-gh:hover{color:var(--t);border-color:var(--b3);background:var(--s3);}
+.btn-d{background:none;color:var(--r);border-color:rgba(255,79,79,0.22);}
+.btn-d:hover{background:rgba(255,79,79,0.06);}
+
+.field{margin-bottom:11px;}
+.field label{display:block;font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+input,textarea,select{width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:var(--rad);color:var(--t);font-family:var(--mono);font-size:11px;padding:7px 10px;outline:none;transition:border-color 0.12s;resize:vertical;}
+input:focus,textarea:focus,select:focus{border-color:var(--g);}
+select option{background:var(--s2);}
+textarea{min-height:65px;}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+
+.proj-card{background:var(--s2);border:1px solid var(--b1);border-radius:6px;padding:13px;cursor:pointer;transition:border-color 0.15s;position:relative;overflow:hidden;}
+.proj-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:opacity 0.15s;}
+.proj-card:hover{border-color:var(--b3);}
+.proj-card:hover::before{opacity:1;}
+.proj-card-name{font-family:var(--sans);font-size:13px;font-weight:700;margin-bottom:3px;}
+.proj-card-desc{font-size:10px;color:var(--t2);margin-bottom:9px;line-height:1.5;}
+.prog-track{height:2px;background:var(--s4);border-radius:2px;margin-top:7px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:2px;transition:width 0.4s ease;}
+
+.task-row{display:flex;align-items:flex-start;gap:7px;padding:7px 10px;background:var(--s2);border:1px solid var(--b1);border-radius:var(--rad);margin-bottom:4px;}
+.chk{width:14px;height:14px;border:1.5px solid var(--b3);border-radius:3px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;background:none;transition:all 0.12s;}
+.chk.done{background:var(--g);border-color:var(--g);}
+.chk.done::after{content:'✓';font-size:9px;color:#080a09;font-weight:700;}
+.task-txt{font-size:11px;flex:1;line-height:1.4;}
+.task-txt.done{text-decoration:line-through;color:var(--t3);}
+.tdel{background:none;border:none;color:var(--t3);cursor:pointer;font-size:12px;transition:color 0.12s;padding:0 1px;}
+.tdel:hover{color:var(--r);}
+.dec-item{padding:9px 12px;background:var(--s2);border:1px solid var(--b1);border-left:2px solid var(--g);border-radius:var(--rad);margin-bottom:5px;}
+.dec-meta{font-size:9px;color:var(--t3);display:flex;gap:9px;margin-bottom:3px;}
+.dec-text{font-size:11px;line-height:1.5;}
+.rule-item{display:flex;align-items:flex-start;gap:7px;padding:8px 11px;background:var(--s2);border:1px solid var(--b1);border-radius:var(--rad);margin-bottom:4px;}
+.rule-n{font-size:9px;color:var(--g);min-width:20px;margin-top:1px;}
+.rule-txt{font-size:11px;flex:1;line-height:1.4;}
+.mbr-row{display:flex;align-items:center;gap:9px;padding:8px 11px;background:var(--s2);border:1px solid var(--b1);border-radius:var(--rad);margin-bottom:4px;}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--gd);border:1px solid rgba(90,255,71,0.2);display:flex;align-items:center;justify-content:center;font-family:var(--sans);font-size:11px;font-weight:700;color:var(--g);flex-shrink:0;}
+
+.br-out{background:var(--s2);border:1px solid var(--b2);border-radius:6px;padding:16px;font-family:var(--mono);font-size:11px;line-height:1.8;color:var(--t2);white-space:pre-wrap;word-break:break-word;max-height:500px;overflow-y:auto;}
+
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--s2);border:1px solid var(--b1);border-radius:var(--rad);margin-bottom:6px;}
+.setting-label{font-size:12px;font-weight:600;}
+.setting-desc{font-size:10px;color:var(--t3);margin-top:2px;}
+
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.78);z-index:1000;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(4px);}
+.overlay.on{display:flex;}
+.modal{background:var(--s1);border:1px solid var(--b2);border-radius:10px;padding:20px;width:100%;max-width:500px;max-height:88vh;overflow-y:auto;animation:su 0.18s ease;}
+@keyframes su{from{transform:translateY(9px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-title{font-family:var(--sans);font-size:16px;font-weight:800;margin-bottom:16px;}
+.modal-foot{display:flex;gap:6px;justify-content:flex-end;margin-top:16px;}
+
+.info{background:rgba(79,184,255,0.06);border:1px solid rgba(79,184,255,0.18);border-radius:var(--rad);padding:10px 12px;font-size:11px;color:var(--bl);line-height:1.7;margin-bottom:12px;}
+.warn{background:rgba(255,210,79,0.06);border:1px solid rgba(255,210,79,0.18);border-radius:var(--rad);padding:10px 12px;font-size:11px;color:var(--y);line-height:1.7;margin-bottom:12px;}
+.upgrade-box{background:var(--gd);border:1px solid rgba(90,255,71,0.2);border-radius:var(--rad);padding:12px 14px;font-size:11px;color:var(--t2);line-height:1.7;margin-bottom:12px;font-family:var(--mono);}
+.upgrade-box a{color:var(--g);text-decoration:none;}
+.upgrade-box a:hover{text-decoration:underline;}
+
+.div{border:none;border-top:1px solid var(--b1);margin:16px 0;}
+.empty{text-align:center;padding:28px 14px;color:var(--t3);font-size:11px;}
+.ei{font-size:26px;opacity:0.3;margin-bottom:7px;}
+.toast{position:fixed;bottom:18px;right:18px;background:var(--s3);border:1px solid var(--b3);border-radius:var(--rad);padding:8px 13px;font-size:11px;color:var(--t);z-index:2000;transform:translateY(50px);opacity:0;transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1);}
+.toast.on{transform:translateY(0);opacity:1;}
+.toast.ok{border-color:rgba(90,255,71,0.3);color:var(--g);}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<!-- FIRST RUN -->
+<div id="first-run">
+  <div class="fr-card">
+    <div class="fr-logo">⬡</div>
+    <div class="fr-title">Knox <span>Easy</span></div>
+    <p class="fr-sub">AI session memory — simple, free, no setup required.<br>Just tell us your name and you're in.</p>
+    <input class="fr-input" type="text" id="fr-name" placeholder="Your name" maxlength="30"
+      onkeydown="if(event.key==='Enter')startApp()">
+    <div class="fr-err" id="fr-err"></div>
+    <button class="fr-btn" onclick="startApp()">Start →</button>
+  </div>
+</div>
+
+<!-- PIN SCREEN (only if enabled) -->
+<div id="pin-screen">
+  <div class="pin-card">
+    <div class="fr-logo">🔒</div>
+    <div class="pin-title">Knox <span>Easy</span></div>
+    <p class="pin-sub" id="pin-greeting">Enter your PIN to unlock.</p>
+    <div class="pin-dots" id="pin-dots"></div>
+    <div class="numpad" id="pin-numpad"></div>
+    <div class="pin-err" id="pin-err"></div>
+    <div class="pin-forgot" onclick="disablePin()">Remove PIN & open</div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- APP -->
+<div id="app">
+  <header>
+    <div class="wordmark">
+      <div class="wm-chip">K/</div>Knox<span class="wm-easy">easy</span>
+    </div>
+    <div class="hdr-r">
+      <div class="session-pill"><div class="s-dot"></div><span id="hdr-user">—</span></div>
+      <button class="hbtn" onclick="exportData()">Export</button>
+      <label class="hbtn" style="cursor:pointer;">Import<input type="file" accept=".json" style="display:none" id="imp-file" onchange="importData(event)"></label>
+      <button class="hbtn red" id="lock-btn" onclick="lockApp()" style="display:none;">🔒 Lock</button>
+    </div>
+  </header>
+  <nav>
+    <button class="nb on" onclick="nav('dashboard')">Dashboard</button>
+    <button class="nb" onclick="nav('projects')">Projects</button>
+    <button class="nb" onclick="nav('briefing')">Briefing</button>
+    <button class="nb" onclick="nav('rules')">Rules</button>
+    <button class="nb" onclick="nav('team')">Team</button>
+    <button class="nb" onclick="nav('settings')">Settings</button>
+  </nav>
+  <main>
+
+    <!-- DASHBOARD -->
+    <div class="panel on" id="panel-dashboard">
+      <div class="stat-row" id="dash-stats"></div>
+      <div class="g2">
+        <div>
+          <div class="sec-head"><span class="sec-title">Active Projects</span><button class="btn btn-gh" onclick="nav('projects')" style="font-size:10px;">All →</button></div>
+          <div id="dash-projs"></div>
+        </div>
+        <div>
+          <div class="sec-head"><span class="sec-title">Recent Decisions</span></div>
+          <div id="dash-decs"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div class="panel" id="panel-projects">
+      <div class="sec-head"><div><div class="pg-title">Projects</div></div><button class="btn btn-p" onclick="openAddProj()">+ Project</button></div>
+      <div id="proj-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px;"></div>
+      <div id="proj-detail" style="display:none;"></div>
+    </div>
+
+    <!-- BRIEFING -->
+    <div class="panel" id="panel-briefing">
+      <div class="pg-title">Session Briefing</div>
+      <p class="pg-sub">Generate your briefing, then copy the opening instruction. Paste both into your AI — briefing first, instruction second.</p>
+      <div class="g2" style="margin-bottom:12px;">
+        <div>
+          <div class="field"><label>Session Focus</label><input type="text" id="br-focus" placeholder="What are we working on today?"></div>
+          <div class="field"><label>Extra Context</label><textarea id="br-extra"></textarea></div>
+        </div>
+        <div>
+          <div class="field"><label>Projects to include</label><div id="br-proj-chk" style="display:flex;flex-direction:column;gap:4px;margin-top:2px;"></div></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:7px;margin-bottom:12px;">
+        <button class="btn btn-p" onclick="generateBriefing()">Generate</button>
+        <button class="btn btn-gh" onclick="copyBriefing()">Copy to Clipboard</button>
+      </div>
+      <div style="position:relative;">
+        <button class="btn btn-gh" style="position:absolute;top:9px;right:9px;z-index:1;font-size:9px;" onclick="copyBriefing()">Copy</button>
+        <div class="br-out" id="br-out">← Generate a briefing above.</div>
+      </div>
+
+      <hr class="div">
+      <div class="sec-head" style="margin-bottom:8px;">
+        <span class="sec-title" style="font-size:14px;">Session Opening Instruction</span>
+        <button class="btn btn-gh" onclick="copyOpening()">Copy</button>
+      </div>
+      <p style="font-family:var(--mono);font-size:11px;color:var(--t2);line-height:1.6;margin-bottom:10px;">Paste this immediately after the briefing. Tells your AI to confirm, ask one question, and wait.</p>
+      <div class="br-out" id="opening-out" style="font-size:11px;line-height:1.8;">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SESSION OPENING INSTRUCTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+You have received a Knox session briefing. Before doing
+anything else:
+
+1. Confirm in two or three sentences what you understand
+   the current state to be, based on the briefing above.
+
+2. Ask one question — either the single most important
+   open question from the briefing, or simply:
+   "What are we working on today?"
+
+3. Wait. Do not suggest, plan, propose, or begin any work
+   until the owner has answered and explicitly said go.
+
+The briefing tells you where things stand.
+The owner tells you what happens next.
+Not the other way around.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+    </div>
+
+    <!-- RULES -->
+    <div class="panel" id="panel-rules">
+      <div class="sec-head"><div><div class="pg-title">Session Rules</div><p class="pg-sub" style="margin-bottom:0;">Auto-included in every briefing.</p></div><button class="btn btn-p" onclick="openAddRule()">+ Rule</button></div>
+      <div id="rule-list"></div>
+    </div>
+
+    <!-- TEAM -->
+    <div class="panel" id="panel-team">
+      <div class="sec-head"><div><div class="pg-title">Team</div></div><button class="btn btn-p" onclick="openAddMbr()">+ Member</button></div>
+      <div id="mbr-list"></div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="panel" id="panel-settings">
+      <div class="pg-title">Settings</div>
+      <p class="pg-sub">Manage your Knox Easy configuration.</p>
+
+      <div class="sec-title" style="margin-bottom:10px;">Account</div>
+      <div class="setting-row">
+        <div><div class="setting-label">Your name</div><div class="setting-desc" id="settings-name">—</div></div>
+        <button class="btn btn-gh" onclick="changeName()">Change</button>
+      </div>
+
+      <hr class="div">
+      <div class="sec-title" style="margin-bottom:10px;">PIN Protection</div>
+      <p style="font-family:var(--mono);font-size:11px;color:var(--t2);line-height:1.7;margin-bottom:12px;">Knox Easy opens without a PIN by default. Enable a PIN if you want to protect it on a shared device.</p>
+      <div id="pin-settings"></div>
+
+      <hr class="div">
+      <div class="sec-title" style="margin-bottom:10px;">Want more features?</div>
+      <div class="upgrade-box">
+        ✦ <strong style="color:var(--t);">Knox Full</strong> adds a credential vault for storing API keys, service URLs, account logins and access details for any service — Google Drive, OneDrive, Dropbox, GitHub, and more. Includes expiry warnings, environment tags, and PIN reset by email.<br><br>
+        <a href="https://knox-public.onrender.com/app.html" target="_blank">→ Try Knox Full</a> &nbsp;·&nbsp;
+        <a href="https://raw.githubusercontent.com/lance505504-tech/knox-public/main/app.html" download="knox-full.html">Download Knox Full</a>
+      </div>
+
+      <hr class="div">
+      <div class="sec-title" style="margin-bottom:10px;">Data</div>
+      <div class="setting-row">
+        <div><div class="setting-label">Export</div><div class="setting-desc">Download all data as JSON</div></div>
+        <button class="btn btn-gh" onclick="exportData()">Export</button>
+      </div>
+      <div class="setting-row">
+        <div><div class="setting-label">Clear all data</div><div class="setting-desc">Wipe Knox Easy on this device</div></div>
+        <button class="btn btn-d" onclick="clearAll()">Clear All</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODALS -->
+<div class="overlay" id="m-proj"><div class="modal">
+  <div class="modal-title" id="m-proj-t">New Project</div>
+  <input type="hidden" id="proj-eid">
+  <div class="field"><label>Name</label><input type="text" id="proj-name"></div>
+  <div class="field"><label>Description</label><textarea id="proj-desc" style="min-height:50px;"></textarea></div>
+  <div class="fr2">
+    <div class="field"><label>Status</label><select id="proj-status"><option value="active">Active</option><option value="paused">Paused</option><option value="done">Done</option></select></div>
+    <div class="field"><label>Colour</label><select id="proj-color"><option value="#5aff47">Green</option><option value="#4fb8ff">Blue</option><option value="#ffd24f">Amber</option><option value="#ff4f4f">Red</option><option value="#b44fff">Purple</option><option value="#ff944f">Orange</option><option value="#4fffcf">Teal</option></select></div>
+  </div>
+  <div class="modal-foot"><button class="btn btn-gh" onclick="closeM('m-proj')">Cancel</button><button class="btn btn-p" onclick="saveProj()">Save</button></div>
+</div></div>
+
+<div class="overlay" id="m-task"><div class="modal">
+  <div class="modal-title">Add Task</div><input type="hidden" id="task-pid">
+  <div class="field"><label>Task</label><textarea id="task-txt" style="min-height:55px;"></textarea></div>
+  <div class="field"><label>Priority</label><select id="task-pri"><option value="normal">Normal</option><option value="high">High !</option><option value="blocked">Blocked ✕</option></select></div>
+  <div class="modal-foot"><button class="btn btn-gh" onclick="closeM('m-task')">Cancel</button><button class="btn btn-p" onclick="saveTask()">Add</button></div>
+</div></div>
+
+<div class="overlay" id="m-dec"><div class="modal">
+  <div class="modal-title">Log Decision</div><input type="hidden" id="dec-pid">
+  <div class="field"><label>Decision / Conclusion</label><textarea id="dec-txt" style="min-height:80px;"></textarea></div>
+  <div class="modal-foot"><button class="btn btn-gh" onclick="closeM('m-dec')">Cancel</button><button class="btn btn-p" onclick="saveDec()">Log</button></div>
+</div></div>
+
+<div class="overlay" id="m-rule"><div class="modal">
+  <div class="modal-title">Add Rule</div>
+  <div class="field"><label>Category</label><select id="rule-cat"><option>General</option><option>Code</option><option>Workflow</option><option>Communication</option><option>Custom</option></select></div>
+  <div class="field"><label>Rule</label><textarea id="rule-txt" style="min-height:65px;"></textarea></div>
+  <div class="modal-foot"><button class="btn btn-gh" onclick="closeM('m-rule')">Cancel</button><button class="btn btn-p" onclick="saveRule()">Add</button></div>
+</div></div>
+
+<div class="overlay" id="m-mbr"><div class="modal">
+  <div class="modal-title">Add Member</div>
+  <div class="fr2"><div class="field"><label>Name</label><input type="text" id="mbr-name"></div><div class="field"><label>Role</label><input type="text" id="mbr-role"></div></div>
+  <div class="field"><label>Notes</label><input type="text" id="mbr-notes"></div>
+  <div class="modal-foot"><button class="btn btn-gh" onclick="closeM('m-mbr')">Cancel</button><button class="btn btn-p" onclick="saveMbr()">Add</button></div>
+</div></div>
+
+<!-- PIN SETUP MODAL -->
+<div class="overlay" id="m-pin"><div class="modal">
+  <div class="modal-title" id="m-pin-title">Enable PIN</div>
+  <p style="font-size:11px;color:var(--t2);font-family:var(--mono);line-height:1.6;margin-bottom:16px;" id="m-pin-desc">Choose a 4–6 digit PIN to protect Knox Easy.</p>
+  <div class="pin-dots" id="setup-dots" style="justify-content:center;margin-bottom:14px;"></div>
+  <div class="numpad" id="setup-numpad" style="max-width:240px;margin:0 auto 12px;"></div>
+  <div class="pin-err" id="setup-pin-err" style="text-align:center;"></div>
+  <div class="modal-foot"><button class="btn btn-gh" onclick="closeM('m-pin');pinSetupBuffer='';pinSetupFirst='';renderSetupDots();">Cancel</button></div>
+</div></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// STORAGE — plain JSON, no crypto
+// ═══════════════════════════════════════════════════════════
+const LS = 'knox_easy_data';
+const LS_CFG = 'knox_easy_cfg';
+
+let S = {projects:[],rules:[],members:[]};
+let CFG = {name:'',pin:'',pinEnabled:false};
+
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+function saveS(){localStorage.setItem(LS,JSON.stringify(S));}
+function loadS(){try{const r=localStorage.getItem(LS);if(r)S=JSON.parse(r);}catch{}}
+function saveCFG(){localStorage.setItem(LS_CFG,JSON.stringify(CFG));}
+function loadCFG(){try{const r=localStorage.getItem(LS_CFG);if(r)CFG=JSON.parse(r);}catch{}}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+loadCFG(); loadS();
+
+if(!CFG.name){
+  // First run
+  document.getElementById('first-run').style.display='flex';
+  setTimeout(()=>document.getElementById('fr-name').focus(),100);
+} else if(CFG.pinEnabled && CFG.pin){
+  // PIN enabled — show pin screen
+  document.getElementById('first-run').style.display='none';
+  document.getElementById('pin-screen').classList.add('on');
+  document.getElementById('pin-greeting').textContent=`Welcome back, ${CFG.name}. Enter your PIN.`;
+  buildPinPad('pin-dots','pin-numpad','pin-err', verifyPin);
+} else {
+  // No PIN — open straight in
+  document.getElementById('first-run').style.display='none';
+  openApp();
+}
+
+function startApp(){
+  const name=document.getElementById('fr-name').value.trim();
+  if(!name){document.getElementById('fr-err').textContent='Please enter your name.';return;}
+  CFG.name=name;
+  saveCFG();
+  loadDefaultRules();
+  saveS();
+  document.getElementById('first-run').style.display='none';
+  openApp();
+}
+
+// ═══════════════════════════════════════════════════════════
+// PIN (optional)
+// ═══════════════════════════════════════════════════════════
+let pinBuffer='';
+
+function buildPinPad(dotsId, numpadId, errId, onSubmit){
+  const dots=document.getElementById(dotsId);
+  const numpad=document.getElementById(numpadId);
+  if(!dots||!numpad)return;
+  dots.innerHTML=[0,1,2,3,4,5].map(i=>`<div class="pin-dot"></div>`).join('');
+
+  const nums=['1','2','3','4','5','6','7','8','9','','0','⌫'];
+  numpad.innerHTML=nums.map(n=>{
+    if(n==='')return`<div></div>`;
+    if(n==='⌫')return`<button class="npbtn" onclick="pinBuf_del('${dotsId}')">⌫</button>`;
+    return`<button class="npbtn" onclick="pinBuf_add('${n}','${dotsId}','${errId}',${onSubmit.name})">${n}</button>`;
+  }).join('');
+  numpad.innerHTML+=`<button class="npbtn go" style="grid-column:3;" onclick="pinBuf_submit('${dotsId}','${errId}',${onSubmit.name})">→</button>`;
+}
+
+function pinBuf_add(d,dotsId,errId,fn){
+  if(pinBuffer.length>=6)return;
+  pinBuffer+=d;
+  updatePinDots(dotsId);
+  if(pinBuffer.length===6)setTimeout(()=>pinBuf_submit(dotsId,errId,fn),120);
+}
+function pinBuf_del(dotsId){pinBuffer=pinBuffer.slice(0,-1);updatePinDots(dotsId);}
+function pinBuf_submit(dotsId,errId,fn){fn(pinBuffer,dotsId,errId);}
+function updatePinDots(dotsId){
+  const dots=document.getElementById(dotsId);
+  if(!dots)return;
+  [...dots.children].forEach((d,i)=>{d.classList.toggle('filled',i<pinBuffer.length);});
+}
+
+function verifyPin(pin,dotsId,errId){
+  if(pin===CFG.pin){
+    pinBuffer='';
+    document.getElementById('pin-screen').classList.remove('on');
+    openApp();
+  } else {
+    document.getElementById(errId).textContent='Incorrect PIN.';
+    [...document.getElementById(dotsId).children].forEach(d=>{d.classList.add('error','filled');setTimeout(()=>{d.classList.remove('error','filled');},500);});
+    pinBuffer='';
+  }
+}
+
+function disablePin(){
+  if(confirm('Remove PIN and open Knox Easy?')){
+    CFG.pin='';CFG.pinEnabled=false;saveCFG();
+    document.getElementById('pin-screen').classList.remove('on');
+    openApp();
+  }
+}
+
+function lockApp(){
+  if(!CFG.pinEnabled||!CFG.pin)return;
+  pinBuffer='';
+  document.getElementById('app').classList.remove('on');
+  document.getElementById('pin-screen').classList.add('on');
+  buildPinPad('pin-dots','pin-numpad','pin-err',verifyPin);
+}
+
+// PIN setup
+let pinSetupBuffer='';
+let pinSetupFirst='';
+let pinSetupPhase=0;
+
+function openPinSetup(){
+  pinSetupBuffer='';pinSetupFirst='';pinSetupPhase=0;
+  document.getElementById('m-pin-title').textContent='Enable PIN';
+  document.getElementById('m-pin-desc').textContent='Choose a 4–6 digit PIN to protect Knox Easy.';
+  document.getElementById('setup-pin-err').textContent='';
+  buildSetupPad();
+  openM('m-pin');
+}
+
+function buildSetupPad(){
+  const dots=document.getElementById('setup-dots');
+  dots.innerHTML=[0,1,2,3,4,5].map(i=>`<div class="pin-dot"></div>`).join('');
+  const numpad=document.getElementById('setup-numpad');
+  const nums=['1','2','3','4','5','6','7','8','9','','0','⌫'];
+  numpad.innerHTML=nums.map(n=>{
+    if(n==='')return`<div></div>`;
+    if(n==='⌫')return`<button class="npbtn" onclick="setupPinDel()">⌫</button>`;
+    return`<button class="npbtn" onclick="setupPinAdd('${n}')">${n}</button>`;
+  }).join('');
+  numpad.innerHTML+=`<button class="npbtn go" style="grid-column:3;" onclick="setupPinSubmit()">→</button>`;
+}
+
+function setupPinAdd(d){
+  if(pinSetupBuffer.length>=6)return;
+  pinSetupBuffer+=d;
+  const dots=document.getElementById('setup-dots');
+  [...dots.children].forEach((dot,i)=>dot.classList.toggle('filled',i<pinSetupBuffer.length));
+  if(pinSetupBuffer.length===6)setTimeout(setupPinSubmit,120);
+}
+function setupPinDel(){
+  pinSetupBuffer=pinSetupBuffer.slice(0,-1);
+  const dots=document.getElementById('setup-dots');
+  [...dots.children].forEach((dot,i)=>dot.classList.toggle('filled',i<pinSetupBuffer.length));
+}
+function setupPinSubmit(){
+  const err=document.getElementById('setup-pin-err');
+  if(pinSetupBuffer.length<4){err.textContent='PIN must be at least 4 digits.';return;}
+  if(pinSetupPhase===0){
+    pinSetupFirst=pinSetupBuffer;pinSetupBuffer='';pinSetupPhase=1;
+    document.getElementById('m-pin-title').textContent='Confirm PIN';
+    document.getElementById('m-pin-desc').textContent='Enter your PIN again to confirm.';
+    err.textContent='';
+    const dots=document.getElementById('setup-dots');
+    [...dots.children].forEach(d=>d.classList.remove('filled'));
+  } else {
+    if(pinSetupBuffer===pinSetupFirst){
+      CFG.pin=pinSetupBuffer;CFG.pinEnabled=true;saveCFG();
+      closeM('m-pin');
+      renderPinSettings();
+      document.getElementById('lock-btn').style.display='';
+      toast('PIN enabled ✓');
+    } else {
+      err.textContent='PINs did not match. Try again.';
+      pinSetupFirst='';pinSetupBuffer='';pinSetupPhase=0;
+      document.getElementById('m-pin-title').textContent='Enable PIN';
+      document.getElementById('m-pin-desc').textContent='Choose a 4–6 digit PIN.';
+      const dots=document.getElementById('setup-dots');
+      [...dots.children].forEach(d=>d.classList.remove('filled'));
+    }
+  }
+}
+
+function removePinSetting(){
+  CFG.pin='';CFG.pinEnabled=false;saveCFG();
+  document.getElementById('lock-btn').style.display='none';
+  renderPinSettings();toast('PIN removed');
+}
+
+function renderPinSettings(){
+  const el=document.getElementById('pin-settings');
+  if(CFG.pinEnabled&&CFG.pin){
+    el.innerHTML=`
+      <div class="setting-row">
+        <div><div class="setting-label">PIN enabled</div><div class="setting-desc">Knox Easy is PIN protected</div></div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-gh" onclick="openPinSetup()">Change PIN</button>
+          <button class="btn btn-d" onclick="removePinSetting()">Remove</button>
+        </div>
+      </div>`;
+    document.getElementById('lock-btn').style.display='';
+  } else {
+    el.innerHTML=`
+      <div class="setting-row">
+        <div><div class="setting-label">No PIN set</div><div class="setting-desc">Knox Easy opens without a PIN</div></div>
+        <button class="btn btn-gh" onclick="openPinSetup()">Enable PIN</button>
+      </div>`;
+    document.getElementById('lock-btn').style.display='none';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// APP
+// ═══════════════════════════════════════════════════════════
+function openApp(){
+  document.getElementById('app').classList.add('on');
+  document.getElementById('hdr-user').textContent=CFG.name;
+  document.getElementById('settings-name').textContent=CFG.name;
+  renderPinSettings();
+  if(CFG.pinEnabled&&CFG.pin)document.getElementById('lock-btn').style.display='';
+  renderAll();
+}
+
+function changeName(){
+  const n=prompt('Enter new name:',CFG.name);
+  if(n&&n.trim()){CFG.name=n.trim();saveCFG();document.getElementById('hdr-user').textContent=CFG.name;document.getElementById('settings-name').textContent=CFG.name;toast('Name updated ✓');}
+}
+
+function clearAll(){
+  if(!confirm('Clear all Knox Easy data on this device?'))return;
+  localStorage.removeItem(LS);localStorage.removeItem(LS_CFG);location.reload();
+}
+
+// ═══════════════════════════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════════════════════════
+function nav(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('panel-'+id).classList.add('on');
+  document.querySelectorAll('.nb').forEach(b=>{if(b.getAttribute('onclick')?.includes("'"+id+"'"))b.classList.add('on');});
+  if(id==='dashboard')renderDashboard();
+  if(id==='projects')renderProjects();
+  if(id==='briefing')renderBriefingSetup();
+  if(id==='rules')renderRules();
+  if(id==='team')renderTeam();
+}
+function renderAll(){renderDashboard();}
+
+// ═══════════════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════════════
+function renderDashboard(){
+  document.getElementById('dash-stats').innerHTML=`
+    <div class="stat"><div class="stat-n">${S.projects.length}</div><div class="stat-l">Projects</div></div>
+    <div class="stat"><div class="stat-n">${S.projects.reduce((a,p)=>a+(p.tasks||[]).filter(t=>!t.done).length,0)}</div><div class="stat-l">Open Tasks</div></div>
+    <div class="stat"><div class="stat-n">${S.projects.reduce((a,p)=>a+(p.decisions||[]).length,0)}</div><div class="stat-l">Decisions</div></div>`;
+  const active=S.projects.filter(p=>p.status==='active').slice(0,4);
+  document.getElementById('dash-projs').innerHTML=active.length?active.map(p=>{
+    const tasks=p.tasks||[],done=tasks.filter(t=>t.done).length;
+    return`<div class="proj-card" style="margin-bottom:8px;border-left:3px solid ${p.color||'#5aff47'}" onclick="openProjDetail('${p.id}');nav('projects')">
+      <div class="proj-card-name">${p.name}</div><div class="proj-card-desc">${p.desc||''}</div>
+      <div style="font-size:9px;color:var(--t3);">${tasks.length-done} open</div>
+      <div class="prog-track"><div class="prog-fill" style="width:${tasks.length?Math.round(done/tasks.length*100):0}%;background:${p.color}"></div></div>
+    </div>`;}).join(''):'<div class="empty"><div class="ei">📁</div>No active projects yet.</div>';
+  const allD=[];S.projects.forEach(p=>(p.decisions||[]).forEach(d=>allD.push({...d,pname:p.name})));
+  allD.sort((a,b)=>b.timestamp-a.timestamp);
+  document.getElementById('dash-decs').innerHTML=allD.slice(0,5).map(d=>`
+    <div class="dec-item"><div class="dec-meta"><span>${d.pname}</span><span>${d.date}</span></div><div class="dec-text">${d.text}</div></div>`
+  ).join('')||'<div class="empty"><div class="ei">📝</div>No decisions logged yet.</div>';
+}
+
+// ═══════════════════════════════════════════════════════════
+// PROJECTS
+// ═══════════════════════════════════════════════════════════
+function renderProjects(){
+  document.getElementById('proj-detail').style.display='none';
+  document.getElementById('proj-grid').style.display='grid';
+  const g=document.getElementById('proj-grid');
+  if(!S.projects.length){g.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="ei">📁</div>No projects yet.</div>';return;}
+  g.innerHTML=S.projects.map(p=>{
+    const tasks=p.tasks||[],done=tasks.filter(t=>t.done).length,open=tasks.length-done;
+    return`<div class="proj-card" onclick="openProjDetail('${p.id}')" style="border-top:3px solid ${p.color||'#5aff47'}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;">
+        <div class="proj-card-name">${p.name}</div>
+        <span class="bdg ${p.status==='active'?'bg':p.status==='paused'?'by':'bgr'}">${p.status}</span>
+      </div>
+      <div class="proj-card-desc">${p.desc||'No description'}</div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;"><span class="bdg bgr">${open} open</span>${(p.decisions||[]).length?`<span class="bdg bb">${p.decisions.length} dec</span>`:''}</div>
+      <div class="prog-track"><div class="prog-fill" style="width:${tasks.length?Math.round(done/tasks.length*100):0}%;background:${p.color}"></div></div>
+    </div>`;}).join('');
+}
+function openProjDetail(id){
+  const p=S.projects.find(x=>x.id===id);if(!p)return;
+  document.getElementById('proj-grid').style.display='none';
+  document.getElementById('proj-detail').style.display='block';
+  renderProjDetail(p);
+}
+function renderProjDetail(p){
+  const tasks=p.tasks||[],decs=p.decisions||[];
+  const open=tasks.filter(t=>!t.done),done=tasks.filter(t=>t.done);
+  const thtml=arr=>arr.length?arr.map(t=>`<div class="task-row"><div class="chk ${t.done?'done':''}" onclick="toggleTask('${p.id}','${t.id}')"></div><div class="task-txt ${t.done?'done':''}">${t.text}${t.priority==='high'?` <span class="bdg br" style="margin-left:3px;">!</span>`:''}${t.priority==='blocked'?` <span class="bdg by" style="margin-left:3px;">blocked</span>`:''}</div><button class="tdel" onclick="deleteTask('${p.id}','${t.id}')">×</button></div>`).join(''):'<div style="font-size:10px;color:var(--t3);padding:6px 0;">None.</div>';
+  document.getElementById('proj-detail').innerHTML=`
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+      <button class="btn btn-gh" onclick="renderProjects()">← Back</button>
+      <div style="width:9px;height:9px;border-radius:2px;background:${p.color}"></div>
+      <span style="font-family:var(--sans);font-size:17px;font-weight:800;">${p.name}</span>
+      <span class="bdg ${p.status==='active'?'bg':p.status==='paused'?'by':'bgr'}">${p.status}</span>
+      <div style="margin-left:auto;display:flex;gap:5px;">
+        <button class="btn btn-gh" onclick="openEditProj('${p.id}')">Edit</button>
+        <button class="btn btn-d" onclick="deleteProj('${p.id}')">Delete</button>
+      </div>
+    </div>
+    ${p.desc?`<p style="font-size:11px;color:var(--t2);margin-bottom:14px;line-height:1.5;">${p.desc}</p>`:''}
+    <div class="g2" style="margin-bottom:14px;">
+      <div>
+        <div class="sec-head"><span class="sec-title">Tasks</span><button class="btn btn-p" onclick="openAddTask('${p.id}')">+ Task</button></div>
+        ${thtml(open)}
+        ${done.length?`<details style="margin-top:5px;"><summary style="font-size:10px;color:var(--t3);padding:5px 9px;background:var(--s2);border:1px solid var(--b1);border-radius:var(--rad);list-style:none;cursor:pointer;">Done (${done.length})</summary><div style="padding:7px 0;">${thtml(done)}</div></details>`:''}
+      </div>
+      <div>
+        <div class="sec-head"><span class="sec-title">Decision Log</span><button class="btn btn-p" onclick="openAddDec('${p.id}')">+ Decision</button></div>
+        ${decs.length?decs.slice().reverse().map(d=>`<div class="dec-item"><div class="dec-meta"><span>${d.author}</span><span>${d.date}</span></div><div class="dec-text">${d.text}</div><div style="text-align:right;margin-top:4px;"><button class="btn btn-d" style="font-size:9px;" onclick="deleteDec('${p.id}','${d.id}')">Remove</button></div></div>`).join(''):'<div style="font-size:10px;color:var(--t3);padding:6px 0;">None yet.</div>'}
+      </div>
+    </div>
+    <div class="card"><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Notes</div>
+      <textarea id="pn-${p.id}" style="min-height:80px;" onblur="saveNotes('${p.id}')">${p.notes||''}</textarea>
+    </div>`;
+}
+function saveNotes(id){const p=S.projects.find(x=>x.id===id);if(p){p.notes=document.getElementById('pn-'+id).value;saveS();}}
+function openAddProj(){document.getElementById('m-proj-t').textContent='New Project';document.getElementById('proj-eid').value='';['proj-name','proj-desc'].forEach(i=>document.getElementById(i).value='');document.getElementById('proj-status').value='active';document.getElementById('proj-color').value='#5aff47';openM('m-proj');}
+function openEditProj(id){const p=S.projects.find(x=>x.id===id);if(!p)return;document.getElementById('m-proj-t').textContent='Edit Project';document.getElementById('proj-eid').value=id;document.getElementById('proj-name').value=p.name;document.getElementById('proj-desc').value=p.desc||'';document.getElementById('proj-status').value=p.status;document.getElementById('proj-color').value=p.color||'#5aff47';openM('m-proj');}
+function saveProj(){const name=document.getElementById('proj-name').value.trim();if(!name){toast('Name required',false);return;}const id=document.getElementById('proj-eid').value;const d={name,desc:document.getElementById('proj-desc').value,status:document.getElementById('proj-status').value,color:document.getElementById('proj-color').value};if(id){const p=S.projects.find(x=>x.id===id);if(p)Object.assign(p,d);}else S.projects.push({id:uid(),...d,tasks:[],decisions:[],notes:'',created:Date.now()});saveS();closeM('m-proj');renderProjects();toast('Saved ✓');}
+function deleteProj(id){if(!confirm('Delete project and all its data?'))return;S.projects=S.projects.filter(p=>p.id!==id);saveS();renderProjects();}
+function openAddTask(pid){document.getElementById('task-pid').value=pid;document.getElementById('task-txt').value='';document.getElementById('task-pri').value='normal';openM('m-task');}
+function saveTask(){const txt=document.getElementById('task-txt').value.trim();if(!txt){toast('Required',false);return;}const pid=document.getElementById('task-pid').value;const p=S.projects.find(x=>x.id===pid);if(!p)return;if(!p.tasks)p.tasks=[];p.tasks.push({id:uid(),text:txt,done:false,priority:document.getElementById('task-pri').value,created:Date.now()});saveS();closeM('m-task');renderProjDetail(p);toast('Added ✓');}
+function toggleTask(pid,tid){const p=S.projects.find(x=>x.id===pid);if(!p)return;const t=p.tasks.find(x=>x.id===tid);if(t)t.done=!t.done;saveS();renderProjDetail(p);}
+function deleteTask(pid,tid){const p=S.projects.find(x=>x.id===pid);if(!p)return;p.tasks=p.tasks.filter(t=>t.id!==tid);saveS();renderProjDetail(p);}
+function openAddDec(pid){document.getElementById('dec-pid').value=pid;document.getElementById('dec-txt').value='';openM('m-dec');}
+function saveDec(){const txt=document.getElementById('dec-txt').value.trim();if(!txt){toast('Required',false);return;}const pid=document.getElementById('dec-pid').value;const p=S.projects.find(x=>x.id===pid);if(!p)return;if(!p.decisions)p.decisions=[];p.decisions.push({id:uid(),text:txt,author:CFG.name||'User',date:new Date().toLocaleDateString('en-GB'),timestamp:Date.now()});saveS();closeM('m-dec');renderProjDetail(p);toast('Logged ✓');}
+function deleteDec(pid,did){const p=S.projects.find(x=>x.id===pid);if(!p)return;p.decisions=p.decisions.filter(d=>d.id!==did);saveS();renderProjDetail(p);}
+
+// ═══════════════════════════════════════════════════════════
+// RULES
+// ═══════════════════════════════════════════════════════════
+function loadDefaultRules(){
+  S.rules=[
+    {id:uid(),category:'General',text:'Read this briefing fully before doing anything. Confirm today\'s focus before starting.'},
+    {id:uid(),category:'General',text:'Summarise all changes at the end of each task.'},
+    {id:uid(),category:'General',text:'Ask before deleting or renaming anything.'},
+    {id:uid(),category:'Workflow',text:'The demented terrier rule. Do not suggest, plan, propose, or begin any work until the owner has stated today\'s focus and said go. Read the briefing. Confirm the state. Ask one grounded question. Wait. Enthusiasm is not the same as usefulness.'},
+    {id:uid(),category:'Workflow',text:'If context window is running low, say so and propose a checkpoint before continuing.'},
+  ];
+}
+function renderRules(){
+  const cats={};S.rules.forEach(r=>{if(!cats[r.category])cats[r.category]=[];cats[r.category].push(r);});
+  const el=document.getElementById('rule-list');
+  if(!S.rules.length){el.innerHTML='<div class="empty"><div class="ei">📐</div>No rules.</div>';return;}
+  el.innerHTML=Object.entries(cats).map(([cat,rules])=>`
+    <details open style="margin-bottom:9px;">
+      <summary style="padding:8px 12px;background:var(--s2);border:1px solid var(--b1);border-radius:var(--rad);cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;font-family:var(--sans);font-size:12px;font-weight:700;">
+        ${cat}<span style="font-family:var(--mono);font-size:9px;color:var(--t3);font-weight:400;">${rules.length}</span>
+      </summary>
+      <div style="padding:8px 0 3px;">
+        ${rules.map((r,i)=>`<div class="rule-item"><div class="rule-n">${String(i+1).padStart(2,'0')}</div><div class="rule-txt">${r.text}</div><button class="tdel" onclick="deleteRule('${r.id}')">×</button></div>`).join('')}
+      </div>
+    </details>`).join('');
+}
+function openAddRule(){document.getElementById('rule-cat').value='General';document.getElementById('rule-txt').value='';openM('m-rule');}
+function saveRule(){const txt=document.getElementById('rule-txt').value.trim();if(!txt){toast('Required',false);return;}S.rules.push({id:uid(),category:document.getElementById('rule-cat').value,text:txt});saveS();closeM('m-rule');renderRules();toast('Added ✓');}
+function deleteRule(id){S.rules=S.rules.filter(r=>r.id!==id);saveS();renderRules();}
+
+// ═══════════════════════════════════════════════════════════
+// TEAM
+// ═══════════════════════════════════════════════════════════
+function renderTeam(){
+  const el=document.getElementById('mbr-list');
+  if(!S.members.length){el.innerHTML='<div class="empty"><div class="ei">👥</div>No members.</div>';return;}
+  el.innerHTML=S.members.map(m=>`<div class="mbr-row"><div class="avatar">${m.name[0].toUpperCase()}</div><div style="flex:1;"><div style="font-size:12px;font-weight:600;font-family:var(--sans);">${m.name}${m.name===CFG.name?' <span style="color:var(--g);font-size:9px;">(you)</span>':''}</div><div style="font-size:10px;color:var(--t3);">${m.role||''}${m.notes?' · '+m.notes:''}</div></div><button class="btn btn-d" onclick="deleteMbr('${m.id}')">Remove</button></div>`).join('');
+}
+function openAddMbr(){['mbr-name','mbr-role','mbr-notes'].forEach(i=>document.getElementById(i).value='');openM('m-mbr');}
+function saveMbr(){const name=document.getElementById('mbr-name').value.trim();if(!name){toast('Required',false);return;}S.members.push({id:uid(),name,role:document.getElementById('mbr-role').value.trim(),notes:document.getElementById('mbr-notes').value.trim()});saveS();closeM('m-mbr');renderTeam();toast('Added ✓');}
+function deleteMbr(id){S.members=S.members.filter(m=>m.id!==id);saveS();renderTeam();}
+
+// ═══════════════════════════════════════════════════════════
+// BRIEFING
+// ═══════════════════════════════════════════════════════════
+function renderBriefingSetup(){
+  document.getElementById('br-proj-chk').innerHTML=S.projects.map(p=>`
+    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11px;padding:4px 8px;background:var(--s2);border:1px solid var(--b1);border-radius:var(--rad);">
+      <input type="checkbox" data-bpid="${p.id}" checked style="width:auto;accent-color:var(--g);"> ${p.name}
+    </label>`).join('')||'<span style="font-size:10px;color:var(--t3);">No projects yet.</span>';
+}
+function generateBriefing(){
+  const projIds=[...document.querySelectorAll('[data-bpid]:checked')].map(e=>e.dataset.bpid);
+  const projects=S.projects.filter(p=>projIds.includes(p.id));
+  const focus=document.getElementById('br-focus').value.trim();
+  const extra=document.getElementById('br-extra').value.trim();
+  const date=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  let out=`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nKNOX SESSION BRIEFING — ${date}\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+  if(CFG.name)out+=`OPERATOR: ${CFG.name}\n`;
+  if(focus)out+=`SESSION FOCUS: ${focus}\n`;
+  out+='\n';
+  if(S.members.length){out+=`── TEAM ──────────────────────────────────────\n`;S.members.forEach(m=>{out+=`• ${m.name}${m.role?' ['+m.role+']':''}${m.notes?' — '+m.notes:''}\n`;});out+='\n';}
+  if(S.rules.length){out+=`── RULES & CONVENTIONS ──────────────────────\n`;S.rules.forEach((r,i)=>{out+=`${String(i+1).padStart(2,'0')}. [${r.category}] ${r.text}\n`;});out+='\n';}
+  if(projects.length){
+    out+=`── PROJECTS ──────────────────────────────────\n\n`;
+    projects.forEach(p=>{
+      out+=`▸ ${p.name.toUpperCase()} [${p.status.toUpperCase()}]\n`;
+      if(p.desc)out+=`  ${p.desc}\n`;
+      const open=(p.tasks||[]).filter(t=>!t.done);
+      if(open.length){out+=`  OPEN TASKS:\n`;open.forEach(t=>{out+=`    ${t.priority==='high'?'!':t.priority==='blocked'?'X':'·'} ${t.text}\n`;});}
+      const decs=(p.decisions||[]).slice(-5).reverse();
+      if(decs.length){out+=`  RECENT DECISIONS:\n`;decs.forEach(d=>{out+=`    [${d.date}] ${d.author}: ${d.text}\n`;});}
+      if(p.notes)out+=`  NOTES: ${p.notes}\n`;
+      out+='\n';
+    });
+  }
+  if(extra)out+=`── ADDITIONAL CONTEXT ────────────────────────\n${extra}\n\n`;
+  out+=`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nRead this fully. Ask for today's focus if not specified above.\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+  document.getElementById('br-out').textContent=out;
+  toast('Generated ✓');
+}
+function copyBriefing(){const t=document.getElementById('br-out').textContent;if(t.startsWith('←')){toast('Generate first',false);return;}navigator.clipboard.writeText(t).then(()=>toast('Copied ✓'));}
+function copyOpening(){const txt=document.getElementById('opening-out').textContent;navigator.clipboard.writeText(txt).then(()=>toast('Opening instruction copied ✓'));}
+
+// ═══════════════════════════════════════════════════════════
+// EXPORT / IMPORT
+// ═══════════════════════════════════════════════════════════
+function exportData(){
+  const blob=new Blob([JSON.stringify({knoxVersion:'easy',data:S,name:CFG.name,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');
+  a.href=url;a.download=`knox-easy-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();URL.revokeObjectURL(url);toast('Exported ✓');
+}
+function importData(event){
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const d=JSON.parse(e.target.result);
+      const data=d.data||d;
+      if(confirm('Merge with current data? (Cancel = replace)')){
+        data.projects?.forEach(s=>{if(!S.projects.find(x=>x.id===s.id))S.projects.push(s);});
+        data.rules?.forEach(s=>{if(!S.rules.find(x=>x.id===s.id))S.rules.push(s);});
+        data.members?.forEach(s=>{if(!S.members.find(x=>x.id===s.id))S.members.push(s);});
+      } else {S=data;}
+      saveS();renderAll();nav('dashboard');toast('Imported ✓');
+    }catch{toast('Invalid file',false);}
+  };
+  reader.readAsText(file);event.target.value='';
+}
+
+// ═══════════════════════════════════════════════════════════
+// MODAL / UTILS
+// ═══════════════════════════════════════════════════════════
+function openM(id){document.getElementById(id).classList.add('on');}
+function closeM(id){document.getElementById(id).classList.remove('on');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.overlay.on').forEach(m=>m.classList.remove('on'));});
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('on');}));
+let toastT;
+function toast(msg,ok=true){const el=document.getElementById('toast');el.textContent=msg;el.className='toast on'+(ok?' ok':'');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('on'),2800);}
+function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+</script>
+</body>
+</html>
