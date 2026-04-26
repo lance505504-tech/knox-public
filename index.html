@@ -215,45 +215,50 @@ details summary span { display: inline-block; transition: transform 0.2s; }
     <a class="nav-link" href="#how">How it works</a>
     <a class="nav-link" href="#features">Features</a>
     <a class="nav-link" href="https://github.com/lance505504-tech/knox-public" target="_blank">GitHub</a>
-    <a class="nav-cta" href="easy.html">Try Knox Easy →</a>
+    <a class="nav-cta" href="easy.html">Knox Easy — free →</a>
   </div>
 </nav>
 
 <!-- HERO -->
-<div class="hero">
-  <div class="hero-tag"><div class="hero-dot"></div>Works with any AI assistant</div>
+<div class="hero" style="padding-top:120px;padding-bottom:40px;">
 
-  <h1>Stop re-explaining<br>yourself to <span>AI.</span></h1>
+  <div class="hero-tag" style="margin-bottom:20px;"><div class="hero-dot"></div>Works with any AI assistant</div>
 
-  <p class="hero-sub">
-    Every new AI conversation starts from zero. No memory of your projects,
-    your decisions, your preferences, your tools. Knox fixes that —
-    one structured file, one paste, and your AI picks up exactly where you left off.
-  </p>
+  <p style="font-family:var(--mono);font-size:clamp(13px,2vw,16px);color:var(--t2);margin-bottom:8px;letter-spacing:0.3px;">AI session memory. Free. No account. No setup.</p>
+  <p style="font-family:var(--mono);font-size:clamp(11px,1.5vw,13px);color:var(--t3);margin-bottom:40px;">Stop re-explaining yourself. Paste one briefing. Your AI picks up exactly where you left off.</p>
 
-  <!-- Version picker -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:560px;width:100%;margin:0 auto 28px;" class="version-picker">
+  <!-- Version cards — the hero -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:580px;width:100%;margin:0 auto 20px;" class="version-picker">
 
     <!-- Knox Easy -->
-    <div style="background:var(--s1);border:1px solid rgba(90,255,71,0.3);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:8px;">
-      <div style="font-family:var(--sans);font-size:13px;font-weight:800;color:var(--g);">Knox Easy</div>
-      <div style="font-family:var(--mono);font-size:10px;color:var(--t3);line-height:1.5;">Session memory.<br>Opens instantly.</div>
-      <a href="easy.html" style="display:block;text-align:center;padding:10px;background:var(--g);color:#080a09;border-radius:5px;font-family:var(--sans);font-size:12px;font-weight:700;text-decoration:none;transition:background 0.15s;" onmouseover="this.style.background='#7dff6e'" onmouseout="this.style.background='var(--g)'">Open free →</a>
-      <a href="https://raw.githubusercontent.com/lance505504-tech/knox-public/main/easy.html" download="knox-easy.html" style="display:block;text-align:center;padding:10px;background:none;color:var(--t2);border:1px solid var(--b2);border-radius:5px;font-family:var(--mono);font-size:12px;text-decoration:none;transition:all 0.15s;" onmouseover="this.style.color='var(--t)';this.style.borderColor='var(--b3)'" onmouseout="this.style.color='var(--t2)';this.style.borderColor='var(--b2)'">↓ Download free</a>
+    <div style="background:var(--s1);border:2px solid rgba(90,255,71,0.35);border-radius:10px;padding:24px 20px;display:flex;flex-direction:column;gap:10px;text-align:left;">
+      <div>
+        <div style="font-family:var(--sans);font-size:20px;font-weight:800;color:var(--g);letter-spacing:-0.5px;margin-bottom:4px;">Knox Easy</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--t2);line-height:1.6;">Session memory.<br>Opens instantly.<br>No setup at all.</div>
+      </div>
+      <div style="border-top:1px solid var(--b1);padding-top:10px;display:flex;flex-direction:column;gap:7px;">
+        <a href="easy.html" style="display:block;text-align:center;padding:12px;background:var(--g);color:#080a09;border-radius:6px;font-family:var(--sans);font-size:13px;font-weight:800;text-decoration:none;transition:background 0.15s;" onmouseover="this.style.background='#7dff6e'" onmouseout="this.style.background='var(--g)'">Open free →</a>
+        <a href="https://raw.githubusercontent.com/lance505504-tech/knox-public/main/easy.html" download="knox-easy.html" style="display:block;text-align:center;padding:10px;background:none;color:var(--t2);border:1px solid var(--b2);border-radius:6px;font-family:var(--mono);font-size:12px;text-decoration:none;transition:all 0.15s;" onmouseover="this.style.color='var(--t)';this.style.borderColor='var(--b3)'" onmouseout="this.style.color='var(--t2)';this.style.borderColor='var(--b2)'">↓ Download free</a>
+      </div>
     </div>
 
     <!-- Knox Credential -->
-    <div style="background:var(--s1);border:1px solid var(--b2);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:8px;">
-      <div style="font-family:var(--sans);font-size:13px;font-weight:800;color:var(--t);">Knox Credential</div>
-      <div style="font-family:var(--mono);font-size:10px;color:var(--t3);line-height:1.5;">+ Credential vault.<br>For teams &amp; devs.</div>
-      <a href="app.html" style="display:block;text-align:center;padding:10px;background:var(--s2);color:var(--t);border:1px solid var(--b2);border-radius:5px;font-family:var(--sans);font-size:12px;font-weight:700;text-decoration:none;transition:all 0.15s;" onmouseover="this.style.background='var(--s3)'" onmouseout="this.style.background='var(--s2)'">Open free →</a>
-      <a href="https://raw.githubusercontent.com/lance505504-tech/knox-public/main/app.html" download="knox-credential.html" style="display:block;text-align:center;padding:10px;background:none;color:var(--t2);border:1px solid var(--b2);border-radius:5px;font-family:var(--mono);font-size:12px;text-decoration:none;transition:all 0.15s;" onmouseover="this.style.color='var(--t)';this.style.borderColor='var(--b3)'" onmouseout="this.style.color='var(--t2)';this.style.borderColor='var(--b2)'">↓ Download free</a>
+    <div style="background:var(--s1);border:2px solid var(--b2);border-radius:10px;padding:24px 20px;display:flex;flex-direction:column;gap:10px;text-align:left;">
+      <div>
+        <div style="font-family:var(--sans);font-size:20px;font-weight:800;color:var(--t);letter-spacing:-0.5px;margin-bottom:4px;">Knox Credential</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--t2);line-height:1.6;">+ Credential vault.<br>API keys, logins,<br>expiry warnings.</div>
+      </div>
+      <div style="border-top:1px solid var(--b1);padding-top:10px;display:flex;flex-direction:column;gap:7px;">
+        <a href="app.html" style="display:block;text-align:center;padding:12px;background:var(--s2);color:var(--t);border:1px solid var(--b2);border-radius:6px;font-family:var(--sans);font-size:13px;font-weight:800;text-decoration:none;transition:all 0.15s;" onmouseover="this.style.background='var(--s3)';this.style.borderColor='var(--b3)'" onmouseout="this.style.background='var(--s2)';this.style.borderColor='var(--b2)'">Open free →</a>
+        <a href="https://raw.githubusercontent.com/lance505504-tech/knox-public/main/app.html" download="knox-credential.html" style="display:block;text-align:center;padding:10px;background:none;color:var(--t2);border:1px solid var(--b2);border-radius:6px;font-family:var(--mono);font-size:12px;text-decoration:none;transition:all 0.15s;" onmouseover="this.style.color='var(--t)';this.style.borderColor='var(--b3)'" onmouseout="this.style.color='var(--t2)';this.style.borderColor='var(--b2)'">↓ Download free</a>
+      </div>
     </div>
 
   </div>
-  <a href="#faq" style="font-family:var(--mono);font-size:12px;color:var(--t2);text-decoration:none;margin-bottom:48px;display:inline-block;transition:color 0.15s;" onmouseover="this.style.color='var(--t)'" onmouseout="this.style.color='var(--t2)'">Not sure which? → See FAQ</a>
 
-  <!-- BRIEFING DEMO -->
+  <a href="#faq" style="font-family:var(--mono);font-size:12px;color:var(--t3);text-decoration:none;margin-bottom:48px;display:inline-block;transition:color 0.15s;" onmouseover="this.style.color='var(--t2)'" onmouseout="this.style.color='var(--t3)'">Not sure which? → See FAQ</a>
+
+<!-- BRIEFING DEMO -->
   <div class="briefing-demo">
     <div class="demo-bar">
       <div class="demo-dot" style="background:#ff5f57"></div>
