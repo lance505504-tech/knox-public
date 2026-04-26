@@ -758,6 +758,10 @@ function loadDefaultRules(){
     {id:uid(),category:'Workflow',text:'The demented terrier rule. Do not suggest, plan, propose, or begin any work until the owner has stated today\'s focus and said go. Read the briefing. Confirm the state. Ask one grounded question. Wait. Enthusiasm is not the same as usefulness.'},
     {id:uid(),category:'Workflow',text:'If context window is running low, say so and propose a checkpoint before continuing.'},
     {id:uid(),category:'Workflow',text:'Push verification rule. Every file push must be verified before declaring it done. After pushing to GitHub, confirm the returned SHA, check the file size is consistent, and where practical fetch the file back and verify key content. Pushed means confirmed in the repository — not just that the API call was made. Never say a file is pushed until it is verified.'},
+
+    {id:uid(),category:'Workflow',text:'Thinking-this-through vs let\'s-build-this. Default mode is thinking-this-through — ideas held in tension, no premature structure, one question at a time. Switch to let\'s-build-this only when the owner explicitly signals it. Do not assume a request is a build request because it sounds like one.'},
+    {id:uid(),category:'Workflow',text:'Pre-build declaration. Before writing, editing, or deleting any file, state the scope, assumptions, and risks. Wait for the owner to confirm before touching anything. A build that starts without a declaration has not followed protocol.'},
+    {id:uid(),category:'Workflow',text:'No scope creep. Build only what was declared. If something useful is identified during the build, note it as deferred — do not add it to the build in progress.'},
   ];
 }
 function renderRules(){
