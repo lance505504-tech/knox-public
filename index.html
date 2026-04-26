@@ -226,17 +226,27 @@ details summary span { display: inline-block; transition: transform 0.2s; }
     one structured file, one paste, and your AI picks up exactly where you left off.
   </p>
 
-  <div class="hero-actions">
-    <a class="btn-hero btn-primary" href="easy.html">Knox Easy — open free →</a>
-    <a class="btn-hero btn-ghost" href="app.html">Knox Credential — open free →</a>
+  <!-- Version picker -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:560px;width:100%;margin:0 auto 28px;">
+
+    <!-- Knox Easy -->
+    <div style="background:var(--s1);border:1px solid rgba(90,255,71,0.3);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:8px;">
+      <div style="font-family:var(--sans);font-size:13px;font-weight:800;color:var(--g);">Knox Easy</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--t3);line-height:1.5;">Session memory.<br>Opens instantly.</div>
+      <a href="easy.html" style="display:block;text-align:center;padding:10px;background:var(--g);color:#080a09;border-radius:5px;font-family:var(--sans);font-size:12px;font-weight:700;text-decoration:none;transition:background 0.15s;" onmouseover="this.style.background='#7dff6e'" onmouseout="this.style.background='var(--g)'">Open free →</a>
+      <a href="https://raw.githubusercontent.com/lance505504-tech/knox-public/main/easy.html" download="knox-easy.html" style="display:block;text-align:center;padding:8px;background:none;color:var(--t2);border:1px solid var(--b2);border-radius:5px;font-family:var(--mono);font-size:11px;text-decoration:none;transition:all 0.15s;" onmouseover="this.style.color='var(--t)';this.style.borderColor='var(--b3)'" onmouseout="this.style.color='var(--t2)';this.style.borderColor='var(--b2)'">↓ Download free</a>
+    </div>
+
+    <!-- Knox Credential -->
+    <div style="background:var(--s1);border:1px solid var(--b2);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:8px;">
+      <div style="font-family:var(--sans);font-size:13px;font-weight:800;color:var(--t);">Knox Credential</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--t3);line-height:1.5;">+ Credential vault.<br>For teams &amp; devs.</div>
+      <a href="app.html" style="display:block;text-align:center;padding:10px;background:var(--s2);color:var(--t);border:1px solid var(--b2);border-radius:5px;font-family:var(--sans);font-size:12px;font-weight:700;text-decoration:none;transition:all 0.15s;" onmouseover="this.style.background='var(--s3)'" onmouseout="this.style.background='var(--s2)'">Open free →</a>
+      <a href="https://raw.githubusercontent.com/lance505504-tech/knox-public/main/app.html" download="knox-credential.html" style="display:block;text-align:center;padding:8px;background:none;color:var(--t2);border:1px solid var(--b2);border-radius:5px;font-family:var(--mono);font-size:11px;text-decoration:none;transition:all 0.15s;" onmouseover="this.style.color='var(--t)';this.style.borderColor='var(--b3)'" onmouseout="this.style.color='var(--t2)';this.style.borderColor='var(--b2)'">↓ Download free</a>
+    </div>
+
   </div>
-  <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:40px;">
-    <a href="https://raw.githubusercontent.com/lance505504-tech/knox-public/main/easy.html" download="knox-easy.html" style="font-family:var(--mono);font-size:11px;color:var(--t3);text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='var(--g)'" onmouseout="this.style.color='var(--t3)'">↓ Download Knox Easy</a>
-    <span style="color:var(--t4);font-size:11px;">·</span>
-    <a href="https://raw.githubusercontent.com/lance505504-tech/knox-public/main/app.html" download="knox-credential.html" style="font-family:var(--mono);font-size:11px;color:var(--t3);text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='var(--g)'" onmouseout="this.style.color='var(--t3)'">↓ Download Knox Credential</a>
-    <span style="color:var(--t4);font-size:11px;">·</span>
-    <a href="#faq" style="font-family:var(--mono);font-size:11px;color:var(--t3);text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='var(--t2)'" onmouseout="this.style.color='var(--t3)'">Not sure which? See FAQ ↓</a>
-  </div>
+  <a href="#faq" style="font-family:var(--mono);font-size:11px;color:var(--t3);text-decoration:none;margin-bottom:48px;display:inline-block;transition:color 0.15s;" onmouseover="this.style.color='var(--t2)'" onmouseout="this.style.color='var(--t3)'">Not sure which? See FAQ ↓</a>
 
   <!-- BRIEFING DEMO -->
   <div class="briefing-demo">
