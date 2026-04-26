@@ -263,7 +263,7 @@ details summary span { display: inline-block; transition: transform 0.2s; }
       </div>
       <div style="border-top:1px solid var(--b1);padding-top:10px;display:flex;flex-direction:column;gap:7px;">
         <a href="easy.html" style="display:block;text-align:center;padding:12px;background:var(--g);color:#080a09;border-radius:6px;font-family:var(--sans);font-size:13px;font-weight:800;text-decoration:none;transition:background 0.15s;" onmouseover="this.style.background='#7dff6e'" onmouseout="this.style.background='var(--g)'">Open free →</a>
-        <a href="https://raw.githubusercontent.com/lance505504-tech/knox-public/main/easy.html" download="knox-easy.html" style="display:block;text-align:center;padding:10px;background:none;color:var(--t2);border:1px solid var(--b2);border-radius:6px;font-family:var(--mono);font-size:12px;text-decoration:none;transition:all 0.15s;" onmouseover="this.style.color='var(--t)';this.style.borderColor='var(--b3)'" onmouseout="this.style.color='var(--t2)';this.style.borderColor='var(--b2)'">↓ Download free</a>
+        <button onclick="downloadKnox('easy.html','knox-easy.html')" style="display:block;width:100%;text-align:center;padding:10px;background:none;color:var(--t2);border:1px solid var(--b2);border-radius:6px;font-family:var(--mono);font-size:12px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.color='var(--t)';this.style.borderColor='var(--b3)'" onmouseout="this.style.color='var(--t2)';this.style.borderColor='var(--b2)'">↓ Download free</button>
       </div>
     </div>
 
@@ -275,7 +275,7 @@ details summary span { display: inline-block; transition: transform 0.2s; }
       </div>
       <div style="border-top:1px solid var(--b1);padding-top:10px;display:flex;flex-direction:column;gap:7px;">
         <a href="app.html" style="display:block;text-align:center;padding:12px;background:var(--s2);color:var(--t);border:1px solid var(--b2);border-radius:6px;font-family:var(--sans);font-size:13px;font-weight:800;text-decoration:none;transition:all 0.15s;" onmouseover="this.style.background='var(--s3)';this.style.borderColor='var(--b3)'" onmouseout="this.style.background='var(--s2)';this.style.borderColor='var(--b2)'">Open free →</a>
-        <a href="https://raw.githubusercontent.com/lance505504-tech/knox-public/main/app.html" download="knox-credential.html" style="display:block;text-align:center;padding:10px;background:none;color:var(--t2);border:1px solid var(--b2);border-radius:6px;font-family:var(--mono);font-size:12px;text-decoration:none;transition:all 0.15s;" onmouseover="this.style.color='var(--t)';this.style.borderColor='var(--b3)'" onmouseout="this.style.color='var(--t2)';this.style.borderColor='var(--b2)'">↓ Download free</a>
+        <button onclick="downloadKnox('app.html','knox-credential.html')" style="display:block;width:100%;text-align:center;padding:10px;background:none;color:var(--t2);border:1px solid var(--b2);border-radius:6px;font-family:var(--mono);font-size:12px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.color='var(--t)';this.style.borderColor='var(--b3)'" onmouseout="this.style.color='var(--t2)';this.style.borderColor='var(--b2)'">↓ Download free</button>
       </div>
     </div>
 
@@ -788,5 +788,22 @@ details summary span { display: inline-block; transition: transform 0.2s; }
   </div>
 </footer>
 
+
+<script>
+async function downloadKnox(filename, label) {
+  try {
+    const res = await fetch('/' + filename);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = label;
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch(e) {
+    window.open('/' + filename, '_blank');
+  }
+}
+</script>
 </body>
 </html>
