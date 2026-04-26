@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Knox — Remember Everything</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap');
+
+:root {
+  --bg: #080a09;
+  --s1: #0f1210;
+  --s2: #161a16;
+  --b1: #252b25;
+  --b2: #303830;
+  --g: #5aff47;
+  --gd: rgba(90,255,71,0.1);
+  --t: #e4ebe4;
+  --t2: #8a988a;
+  --t3: #4a544a;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Syne', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--t); font-family: var(--sans); min-height: 100vh; overflow-x: hidden; }
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(90,255,71,0.07) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px; height: 58px;
+  background: rgba(8,10,9,0.85); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--b1);
+}
+.nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.nav-chip { background: var(--g); color: #080a09; border-radius: 4px; padding: 3px 9px; font-family: var(--sans); font-size: 14px; font-weight: 800; }
+.nav-name { font-size: 17px; font-weight: 800; color: var(--t); letter-spacing: -0.3px; }
+.nav-links { display: flex; align-items: center; gap: 8px; }
+.nav-link { padding: 6px 14px; border-radius: 5px; font-family: var(--mono); font-size: 11px; color: var(--t2); text-decoration: none; transition: color 0.15s; }
+.nav-link:hover { color: var(--t); }
+.nav-cta { padding: 7px 16px; background: var(--g); color: #080a09; border-radius: 5px; font-family: var(--sans); font-size: 12px; font-weight: 700; text-decoration: none; transition: background 0.15s; }
+.nav-cta:hover { background: #7dff6e; }
+
+/* HERO */
+.hero {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 100px 24px 60px;
+}
+
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 5px 14px; margin-bottom: 28px;
+  background: var(--gd); border: 1px solid rgba(90,255,71,0.25); border-radius: 20px;
+  font-family: var(--mono); font-size: 11px; color: var(--g); letter-spacing: 0.5px;
+}
+.hero-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--g); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
+
+.hero h1 {
+  font-size: clamp(44px, 8vw, 80px);
+  font-weight: 800; letter-spacing: -3px; line-height: 0.95;
+  margin-bottom: 24px; max-width: 800px;
+}
+.hero h1 span { color: var(--g); }
+
+.hero-sub {
+  font-family: var(--mono); font-size: clamp(13px, 2vw, 15px);
+  color: var(--t2); line-height: 1.8; max-width: 560px;
+  margin-bottom: 40px; letter-spacing: 0.2px;
+}
+
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 60px; }
+
+.btn-hero {
+  padding: 13px 28px; border-radius: 6px;
+  font-family: var(--sans); font-size: 14px; font-weight: 700;
+  text-decoration: none; cursor: pointer; border: none;
+  transition: all 0.15s; display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-primary { background: var(--g); color: #080a09; }
+.btn-primary:hover { background: #7dff6e; transform: translateY(-1px); }
+.btn-ghost { background: none; color: var(--t2); border: 1px solid var(--b2); }
+.btn-ghost:hover { color: var(--t); border-color: var(--b2); background: var(--s2); }
+
+/* BRIEFING DEMO */
+.briefing-demo {
+  width: 100%; max-width: 680px;
+  background: var(--s1); border: 1px solid var(--b2);
+  border-radius: 10px; overflow: hidden;
+  text-align: left; margin: 0 auto;
+}
+.demo-bar {
+  display: flex; align-items: center; gap: 7px;
+  padding: 10px 16px; background: var(--s2);
+  border-bottom: 1px solid var(--b1);
+}
+.demo-dot { width: 10px; height: 10px; border-radius: 50%; }
+.demo-title { font-family: var(--mono); font-size: 10px; color: var(--t3); margin-left: auto; letter-spacing: 0.5px; }
+.demo-body {
+  padding: 18px 20px;
+  font-family: var(--mono); font-size: 11px; line-height: 1.9;
+  color: var(--t2); white-space: pre;
+}
+.demo-body .kw { color: var(--g); }
+.demo-body .dim { color: var(--t3); }
+.demo-body .hl { color: var(--t); }
+
+/* SECTION */
+section { position: relative; z-index: 1; padding: 80px 24px; }
+.section-inner { max-width: 1040px; margin: 0 auto; }
+.section-tag { font-family: var(--mono); font-size: 10px; color: var(--g); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
+.section-title { font-size: clamp(28px, 5vw, 44px); font-weight: 800; letter-spacing: -1.5px; margin-bottom: 16px; line-height: 1.05; }
+.section-sub { font-family: var(--mono); font-size: 13px; color: var(--t2); line-height: 1.8; max-width: 540px; }
+
+/* PROBLEM */
+.problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--b1); border: 1px solid var(--b1); border-radius: 10px; overflow: hidden; margin-top: 48px; }
+@media(max-width:680px){.problem-grid{grid-template-columns:1fr;}}
+.problem-cell { background: var(--bg); padding: 28px 24px; }
+.problem-cell.highlight { background: var(--s1); }
+.problem-label { font-family: var(--mono); font-size: 9px; color: var(--t3); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; }
+.problem-text { font-size: 15px; font-weight: 700; line-height: 1.4; margin-bottom: 8px; }
+.problem-sub { font-family: var(--mono); font-size: 11px; color: var(--t2); line-height: 1.6; }
+.problem-icon { font-size: 24px; margin-bottom: 12px; }
+
+/* HOW IT WORKS */
+.steps { display: flex; flex-direction: column; gap: 0; margin-top: 48px; }
+.step { display: flex; gap: 24px; padding: 28px 0; border-bottom: 1px solid var(--b1); }
+.step:last-child { border-bottom: none; }
+.step-num { font-family: var(--sans); font-size: 36px; font-weight: 800; color: var(--g); opacity: 0.3; flex-shrink: 0; width: 48px; line-height: 1; }
+.step-body { flex: 1; }
+.step-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+.step-desc { font-family: var(--mono); font-size: 12px; color: var(--t2); line-height: 1.7; }
+.step-tag { display: inline-flex; margin-top: 10px; padding: 3px 9px; background: var(--gd); border: 1px solid rgba(90,255,71,0.2); border-radius: 3px; font-family: var(--mono); font-size: 10px; color: var(--g); }
+
+/* FEATURES */
+.feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 48px; }
+@media(max-width:760px){.feature-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:480px){.feature-grid{grid-template-columns:1fr;}}
+.feature { background: var(--s1); border: 1px solid var(--b1); border-radius: 8px; padding: 20px; transition: border-color 0.2s; }
+.feature:hover { border-color: var(--b2); }
+.feature-icon { font-size: 22px; margin-bottom: 10px; }
+.feature-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+.feature-desc { font-family: var(--mono); font-size: 11px; color: var(--t2); line-height: 1.6; }
+
+/* AI COMPAT */
+.ai-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 32px; }
+.ai-chip {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px; background: var(--s1); border: 1px solid var(--b2);
+  border-radius: 6px; font-family: var(--mono); font-size: 12px; color: var(--t2);
+}
+.ai-chip .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--g); }
+
+/* CTA SECTION */
+.cta-section {
+  text-align: center; padding: 100px 24px;
+  position: relative; z-index: 1;
+}
+.cta-section h2 { font-size: clamp(32px, 6vw, 56px); font-weight: 800; letter-spacing: -2px; margin-bottom: 16px; }
+.cta-section h2 span { color: var(--g); }
+.cta-section p { font-family: var(--mono); font-size: 13px; color: var(--t2); margin-bottom: 36px; line-height: 1.7; }
+.cta-note { font-family: var(--mono); font-size: 11px; color: var(--t3); margin-top: 16px; }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--b1); padding: 24px 32px;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  position: relative; z-index: 1;
+}
+.footer-left { font-family: var(--mono); font-size: 11px; color: var(--t3); }
+.footer-links { display: flex; gap: 16px; }
+.footer-links a { font-family: var(--mono); font-size: 11px; color: var(--t3); text-decoration: none; transition: color 0.15s; }
+.footer-links a:hover { color: var(--t2); }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--b2); border-radius: 3px; }
+
+@media(max-width:600px) {
+  nav { padding: 0 16px; }
+  .nav-links .nav-link { display: none; }
+  .hero { padding: 80px 16px 40px; }
+  section { padding: 60px 16px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="nav-chip">K/</div>
+    <div class="nav-name">Knox</div>
+  </a>
+  <div class="nav-links">
+    <a class="nav-link" href="#how">How it works</a>
+    <a class="nav-link" href="#features">Features</a>
+    <a class="nav-link" href="https://github.com/lance505504-tech/knox-public" target="_blank">GitHub</a>
+    <a class="nav-cta" href="app.html">Try Knox →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag"><div class="hero-dot"></div>Works with any AI assistant</div>
+
+  <h1>Stop re-explaining<br>yourself to <span>AI.</span></h1>
+
+  <p class="hero-sub">
+    Every new AI conversation starts from zero. No memory of your projects,
+    your decisions, your tech stack, your preferences. Knox fixes that —
+    one structured file, one paste, and your AI picks up exactly where you left off.
+  </p>
+
+  <div class="hero-actions">
+    <a class="btn-hero btn-primary" href="app.html">Try Knox free →</a>
+    <a class="btn-hero btn-ghost" href="https://raw.githubusercontent.com/lance505504-tech/knox-public/main/app.html" download="knox.html">↓ Download</a>
+  </div>
+
+  <!-- BRIEFING DEMO -->
+  <div class="briefing-demo">
+    <div class="demo-bar">
+      <div class="demo-dot" style="background:#ff5f57"></div>
+      <div class="demo-dot" style="background:#febc2e"></div>
+      <div class="demo-dot" style="background:#28c840"></div>
+      <div class="demo-title">KNOX SESSION BRIEFING — Sunday 26 April 2026</div>
+    </div>
+    <div class="demo-body"><span class="kw">OPERATOR:</span> <span class="hl">Alex</span>
+<span class="kw">SESSION FOCUS:</span> <span class="hl">Fix the checkout bug, then review Q2 copy</span>
+
+<span class="dim">── RULES ─────────────────────────────────────────</span>
+<span class="hl">01.</span> Read this fully before doing anything.
+<span class="hl">02.</span> Ask before deleting or renaming anything.
+<span class="hl">03.</span> Summarise what changed at the end of each task.
+
+<span class="dim">── PROJECTS ──────────────────────────────────────</span>
+<span class="kw">▸ MY STARTUP [ACTIVE]</span>
+  E-commerce platform. Node.js + Stripe + Postgres.
+  OPEN TASKS:
+    ! Checkout flow breaks on mobile Safari — P1
+    · Q2 homepage copy review
+  RECENT DECISIONS:
+    [24/04] Switched payment provider to Stripe.</div>
+  </div>
+</div>
+</div>
+
+<!-- THE PROBLEM -->
+<section id="problem">
+  <div class="section-inner">
+    <div class="section-tag">The problem</div>
+    <h2 class="section-title">AI has no memory.<br>You pay for that every day.</h2>
+    <p class="section-sub">Every time you open a new chat, you're briefing a new person who knows nothing about you, your work, or your history together.</p>
+
+    <div class="problem-grid">
+      <div class="problem-cell">
+        <div class="problem-icon">😮‍💨</div>
+        <div class="problem-label">Without Knox</div>
+        <div class="problem-text">Re-explaining your project. Again.</div>
+        <div class="problem-sub">What's the stack? What did we decide last time? What's the naming convention? What are you not supposed to touch? Every session. Every time.</div>
+      </div>
+      <div class="problem-cell highlight">
+        <div class="problem-icon">⚡</div>
+        <div class="problem-label">With Knox</div>
+        <div class="problem-text">Paste. Go. Your AI already knows.</div>
+        <div class="problem-sub">One briefing. Your projects, decisions, rules, and credentials — all there. Your AI picks up exactly where you left off, every time.</div>
+      </div>
+      <div class="problem-cell">
+        <div class="problem-icon">🔁</div>
+        <div class="problem-label">The hidden cost</div>
+        <div class="problem-text">Decisions you've already made, made again.</div>
+        <div class="problem-sub">Without a record, AI re-derives answers you already have. You get different answers each session. Progress is hard to build on.</div>
+      </div>
+      <div class="problem-cell highlight">
+        <div class="problem-icon">📋</div>
+        <div class="problem-label">The Knox fix</div>
+        <div class="problem-text">A decision log that travels with every session.</div>
+        <div class="problem-sub">Knox keeps a running record of what was decided and why. Your AI reads it at the start. No re-deriving, no contradictions, no drift.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" style="background:var(--s1);border-top:1px solid var(--b1);border-bottom:1px solid var(--b1);">
+  <div class="section-inner">
+    <div class="section-tag">How it works</div>
+    <h2 class="section-title">Three steps.<br>Then it just works.</h2>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Set up your projects and rules</div>
+          <div class="step-desc">Tell Knox about your work — what you're building, what tools you use, how you want AI to behave. Knox guides you through it with a short setup wizard. Takes about three minutes.</div>
+          <div class="step-tag">One-time setup</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Generate your session briefing</div>
+          <div class="step-desc">Before you start an AI session, open Knox and click Generate. Knox produces a structured briefing containing your projects, open tasks, recent decisions, rules, and any credentials you've chosen to include.</div>
+          <div class="step-tag">30 seconds per session</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Paste and go</div>
+          <div class="step-desc">Paste the briefing at the start of your AI conversation. That's it. Your AI now knows your projects, your conventions, your history, and what you're working on today. Pick up exactly where you left off.</div>
+          <div class="step-tag">Works with any AI</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-inner">
+    <div class="section-tag">Features</div>
+    <h2 class="section-title">Everything in one place.</h2>
+
+    <div class="feature-grid">
+      <div class="feature">
+        <div class="feature-icon">📋</div>
+        <div class="feature-title">Session Briefing</div>
+        <div class="feature-desc">One-click generation. Paste into any AI. Includes your projects, tasks, decisions, rules, and credentials.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📁</div>
+        <div class="feature-title">Project Tracker</div>
+        <div class="feature-desc">Tasks, decisions, and notes per project. The decision log means your AI never re-derives what you've already agreed.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📐</div>
+        <div class="feature-title">Session Rules</div>
+        <div class="feature-desc">Tell AI how to behave — once. Auto-included in every briefing. No more repeating your conventions every session.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔑</div>
+        <div class="feature-title">Credential Vault</div>
+        <div class="feature-desc">Store API keys, service URLs, and account details. Copy any value with one click. Expiry warnings so nothing silently breaks.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">👥</div>
+        <div class="feature-title">Team & Family</div>
+        <div class="feature-desc">Add team members so AI knows who works on what. Share your vault across devices via encrypted export.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔒</div>
+        <div class="feature-title">PIN Protected</div>
+        <div class="feature-desc">Simple PIN unlock. Reset via email if forgotten. Your data stays on your device — nothing sent to any server.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📱</div>
+        <div class="feature-title">Works Everywhere</div>
+        <div class="feature-desc">One HTML file. Opens in any browser on any device. No installation, no account, no subscription.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⏱</div>
+        <div class="feature-title">Expiry Warnings</div>
+        <div class="feature-desc">Credentials expiring soon surface on your dashboard. Never get silently locked out of a service mid-session.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🌐</div>
+        <div class="feature-title">Environment Tags</div>
+        <div class="feature-desc">Dev / Staging / Production labels on every credential. The right key for the right environment, every time.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI COMPATIBILITY -->
+<section style="background:var(--s1);border-top:1px solid var(--b1);border-bottom:1px solid var(--b1);">
+  <div class="section-inner">
+    <div class="section-tag">AI agnostic</div>
+    <h2 class="section-title">Works with the AI<br>you already use.</h2>
+    <p class="section-sub">Knox generates plain text briefings. Any AI assistant that can read a message can use a Knox briefing. No integration, no plugin, no API key required.</p>
+    <div class="ai-row">
+      <div class="ai-chip"><div class="dot"></div>Claude</div>
+      <div class="ai-chip"><div class="dot"></div>ChatGPT</div>
+      <div class="ai-chip"><div class="dot"></div>Gemini</div>
+      <div class="ai-chip"><div class="dot"></div>Copilot</div>
+      <div class="ai-chip"><div class="dot"></div>Mistral</div>
+      <div class="ai-chip"><div class="dot"></div>Any AI assistant</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2>Start remembering.<br><span>It takes five minutes.</span></h2>
+  <p>Set up once. Use every session. Free, forever, no account required.</p>
+  <div class="hero-actions" style="justify-content:center;">
+    <a class="btn-hero btn-primary" href="app.html">Try Knox free →</a>
+    <a class="btn-hero btn-ghost" href="https://raw.githubusercontent.com/lance505504-tech/knox-public/main/app.html" download="knox.html">↓ Download the file</a>
+  </div>
+  <p class="cta-note">One HTML file. No server. No account. Your data never leaves your device.</p>
+</div>
+
+<footer>
+  <div class="footer-left">Knox — open source, free forever. Built by Lance Adams.</div>
+  <div class="footer-links">
+    <a href="https://github.com/lance505504-tech/knox-public" target="_blank">GitHub</a>
+    <a href="app.html">Try it</a>
+    <a href="https://raw.githubusercontent.com/lance505504-tech/knox-public/main/app.html" download="knox.html">Download</a>
+  </div>
+</footer>
+
+</body>
+</html>
