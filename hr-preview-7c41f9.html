@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<!-- Nouvita HR. Preview build with sample data. -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Nouvita HR</title>
+<style>
+  :root {
+    --ink: #000;
+    --paper: #fff;
+    --rule: #000;
+    --quiet: #595959;
+    --faint: #f4f4f4;
+    --alert: #8a0000;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 15px/1.5 Georgia, "Times New Roman", serif;
+  }
+  a { color: var(--ink); }
+  h1, h2, h3 { font-weight: normal; margin: 0; }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px 64px; }
+
+  header.mast { border-bottom: 2px solid var(--rule); padding: 22px 0 12px; margin-bottom: 0; }
+  .mast-row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .mast h1 { font-size: 27px; letter-spacing: -0.01em; }
+  .mast .who { font-size: 13px; color: var(--quiet); }
+  .mast .who strong { font-weight: normal; color: var(--ink); }
+
+  .notice {
+    border: 1px solid var(--rule);
+    padding: 10px 14px;
+    margin: 16px 0 0;
+    font-size: 13px;
+    background: var(--faint);
+  }
+  .notice strong { font-weight: bold; }
+  .notice.alert { border-color: var(--alert); color: var(--alert); background: var(--paper); }
+
+  nav.tabs { display: flex; gap: 26px; border-bottom: 1px solid var(--rule); margin: 22px 0 26px; flex-wrap: wrap; }
+  nav.tabs button {
+    appearance: none; background: none; border: 0; padding: 0 0 9px;
+    font: inherit; font-size: 15px; color: var(--quiet); cursor: pointer;
+    border-bottom: 3px solid transparent; margin-bottom: -1px;
+  }
+  nav.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+  nav.tabs button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+  section[hidden] { display: none; }
+  .panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 4px; flex-wrap: wrap; }
+  .panel-head h2 { font-size: 21px; }
+  .lede { color: var(--quiet); font-size: 13.5px; margin: 0 0 18px; max-width: 62ch; }
+
+  table { width: 100%; border-collapse: collapse; margin: 0 0 8px; font-size: 14px; }
+  caption { text-align: left; font-size: 13px; color: var(--quiet); padding-bottom: 8px; }
+  th, td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  thead th { border-bottom: 2px solid var(--rule); font-weight: bold; font-size: 13px; }
+  tbody tr:last-child td { border-bottom: 1px solid var(--rule); }
+  td.num, th.num { text-align: right; padding-right: 0; font-variant-numeric: tabular-nums; }
+  .expired { color: var(--alert); }
+
+  .tools { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+  input[type=text], input[type=date], input[type=search], select, textarea {
+    font: inherit; font-size: 14px; padding: 6px 8px; border: 1px solid var(--rule);
+    background: var(--paper); color: var(--ink); border-radius: 0;
+  }
+  textarea { width: 100%; min-height: 62px; resize: vertical; }
+  input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+  button.act {
+    font: inherit; font-size: 14px; padding: 7px 15px; cursor: pointer;
+    border: 1px solid var(--rule); background: var(--ink); color: var(--paper); border-radius: 0;
+  }
+  button.act.secondary { background: var(--paper); color: var(--ink); }
+  button.act[disabled] { opacity: 0.4; cursor: not-allowed; }
+  button.linkish {
+    appearance: none; background: none; border: 0; padding: 0; font: inherit; font-size: 13px;
+    text-decoration: underline; cursor: pointer; color: var(--ink);
+  }
+
+  form.record { border: 1px solid var(--rule); padding: 18px; margin: 0 0 26px; }
+  form.record h3 { font-size: 16px; margin-bottom: 4px; }
+  .fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 14px 20px; margin: 16px 0; }
+  .field label { display: block; font-size: 12.5px; color: var(--quiet); margin-bottom: 4px; }
+  .field input, .field select { width: 100%; }
+  .field.wide { grid-column: 1 / -1; }
+
+  .horizon { border: 1px solid var(--rule); padding: 20px 20px 12px; margin-bottom: 26px; }
+  .horizon-scale { position: relative; height: 92px; border-bottom: 1px solid var(--rule); margin: 26px 0 0; }
+  .tick { position: absolute; bottom: 0; border-left: 1px solid var(--quiet); height: 7px; }
+  .tick span { position: absolute; top: 11px; left: -18px; width: 36px; text-align: center; font-size: 11px; color: var(--quiet); }
+  .today { position: absolute; bottom: 0; top: 0; border-left: 2px solid var(--ink); }
+  .today span { position: absolute; top: -20px; left: -14px; font-size: 11px; }
+  .pip { position: absolute; width: 9px; height: 9px; background: var(--ink); border-radius: 50%; transform: translateX(-4px); }
+  .pip.past { background: var(--alert); }
+  .horizon-legend { font-size: 12px; color: var(--quiet); margin-top: 30px; }
+
+  .state { border: 1px solid var(--rule); padding: 22px; font-size: 14px; }
+  .state h3 { font-size: 16px; margin-bottom: 8px; }
+  .state p { margin: 0 0 8px; max-width: 64ch; color: var(--quiet); }
+  .state p:last-child { margin-bottom: 0; }
+  .state code { font-family: "SFMono-Regular", Consolas, monospace; font-size: 12.5px; }
+
+  .ask { border-left: 3px solid var(--ink); padding: 12px 0 12px 14px; margin: 22px 0 0; font-size: 13.5px; max-width: 66ch; }
+  .ask strong { font-weight: bold; }
+
+  footer.foot { border-top: 1px solid var(--rule); margin-top: 44px; padding-top: 12px; font-size: 12px; color: var(--quiet); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  @media print { nav.tabs, .tools, button.act, form.record { display: none; } section[hidden] { display: block; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <div class="mast-row">
+    <h1>Nouvita HR</h1>
+    <div class="who" id="who">Checking your access</div>
+  </div>
+</header>
+
+<div id="banner"></div>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" aria-selected="true"  data-tab="notice">Notice periods</button>
+  <button role="tab" aria-selected="false" data-tab="docs">Documents</button>
+  <button role="tab" aria-selected="false" data-tab="compliance">Compliance</button>
+  <button role="tab" aria-selected="false" data-tab="staff">Staff</button>
+</nav>
+
+<section id="panel-notice">
+  <div class="panel-head"><h2>Notice periods</h2></div>
+  <p class="lede">Everyone who has given notice, and when their last working day falls.</p>
+
+  <form class="record" id="notice-form" onsubmit="return false;">
+    <h3>Record a notice period</h3>
+    <div class="fields">
+      <div class="field"><label for="np-name">Name</label><input type="text" id="np-name" autocomplete="off"></div>
+      <div class="field"><label for="np-given">Date notice given</label><input type="date" id="np-given"></div>
+      <div class="field"><label for="np-length">Notice length</label>
+        <select id="np-length">
+          <option value="">Not stated</option>
+          <option>1 week</option><option>2 weeks</option><option>4 weeks</option>
+          <option>1 month</option><option>2 months</option><option>3 months</option>
+        </select>
+      </div>
+      <div class="field"><label for="np-final">Final working day</label><input type="date" id="np-final"></div>
+      <div class="field"><label for="np-reason">Reason</label>
+        <select id="np-reason">
+          <option value="">Select</option>
+          <option>Resignation</option><option>Retirement</option><option>End of fixed term</option>
+          <option>Dismissal</option><option>Redundancy</option><option>Other</option>
+        </select>
+      </div>
+      <div class="field wide"><label for="np-notes">Notes</label>
+        <textarea id="np-notes" placeholder="Anything the next person needs to know."></textarea>
+        <div style="font-size:12px;color:var(--quiet);margin-top:5px;">Staff information only. Do not record anything about a resident here.</div>
+      </div>
+    </div>
+    <button class="act" id="np-save">Save notice period</button>
+    <span id="np-msg" style="font-size:13px;margin-left:12px;"></span>
+  </form>
+
+  <div id="notice-body"></div>
+
+  <div class="ask">
+    <strong>This is the question for you.</strong> These are the fields the system will hold.
+    Are they the right ones, and is anything missing that you need? Nothing has been built on
+    them yet, so changing them now costs nothing. Reply with what you would add or take away.
+  </div>
+</section>
+
+<section id="panel-docs" hidden>
+  <div class="panel-head"><h2>Documents</h2></div>
+  <p class="lede">Staff documents held by Nouvita, including the legacy RotaMaster files.</p>
+
+  <form class="record" id="doc-form" onsubmit="return false;">
+    <h3>Add a document</h3>
+    <div class="fields">
+      <div class="field"><label for="dc-name">Person</label><input type="text" id="dc-name" autocomplete="off"></div>
+      <div class="field"><label for="dc-type">Document type</label>
+        <select id="dc-type">
+          <option value="">Select</option>
+          <option>Contract</option><option>Right to work</option><option>DBS</option>
+          <option>Qualification</option><option>Training certificate</option>
+          <option>Supervision</option><option>Appraisal</option>
+          <option>Reference</option><option>Other</option>
+        </select>
+      </div>
+      <div class="field"><label for="dc-expiry">Expires on</label><input type="date" id="dc-expiry"></div>
+      <div class="field"><label for="dc-origin">Came from</label>
+        <select id="dc-origin">
+          <option value="">Nouvita</option><option>RotaMaster</option><option>Sona</option>
+        </select>
+      </div>
+      <div class="field wide"><label for="dc-file">File</label><input type="file" id="dc-file"></div>
+    </div>
+    <button class="act" id="dc-save">Upload</button>
+    <span id="dc-msg" style="font-size:13px;margin-left:12px;"></span>
+  </form>
+
+  <div id="docs-body"></div>
+</section>
+
+<section id="panel-compliance" hidden>
+  <div class="panel-head"><h2>Compliance</h2></div>
+  <p class="lede">Documents that have expired or expire in the next ninety days. Anything on
+    the left of the marked line has already lapsed.</p>
+  <div id="compliance-body"></div>
+</section>
+
+<section id="panel-staff" hidden>
+  <div class="panel-head"><h2>Staff</h2></div>
+  <p class="lede">Employed staff. Agency workers are not included.</p>
+  <div class="tools">
+    <input type="search" id="staff-q" placeholder="Search by name" style="min-width:230px;">
+    <select id="staff-site"><option value="">All sites</option></select>
+  </div>
+  <div id="staff-body"></div>
+</section>
+
+<footer class="foot">
+  <span id="foot-mode"></span>
+</footer>
+
+</div>
+
+<script>
+"use strict";
+
+var API = "/api/hr";
+var live = false;
+var caps = [];
+var actor = "";
+var sample = {};
+
+function el(id) { return document.getElementById(id); }
+function esc(s) {
+  return String(s === null || s === undefined ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+function ukdate(iso) {
+  if (!iso) return "";
+  var d = new Date(iso);
+  if (isNaN(d)) return esc(iso);
+  return String(d.getDate()).padStart(2, "0") + " " +
+    ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()] + " " +
+    d.getFullYear();
+}
+function days(n) { var d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); }
+function can(c) { return caps.indexOf(c) !== -1; }
+
+sample.notice = [
+  { person_name: "Marie Okonkwo", notice_given_date: days(-19), notice_length: "1 month", final_working_day: days(11), reason: "Resignation", notes: "Moving to a role nearer home. Exit interview booked." },
+  { person_name: "Stephen Wilkes", notice_given_date: days(-8),  notice_length: "4 weeks", final_working_day: days(20), reason: "Retirement", notes: "Thirty one years' service." },
+  { person_name: "Aisha Rahman",   notice_given_date: days(-2),  notice_length: "1 week",  final_working_day: days(5),  reason: "End of fixed term", notes: "" },
+  { person_name: "Daniel Frost",   notice_given_date: days(-41), notice_length: "3 months",final_working_day: days(49), reason: "Resignation", notes: "Deputy manager. Replacement not yet advertised." }
+];
+sample.docs = [
+  { person_name: "Marie Okonkwo",  doc_type: "Right to work", filename: "rtw_okonkwo.pdf",       original_system: "RotaMaster", size_bytes: 184320, expires_on: days(-6),  created_at: days(-260) },
+  { person_name: "Stephen Wilkes", doc_type: "DBS",           filename: "dbs_wilkes.pdf",        original_system: "RotaMaster", size_bytes: 210944, expires_on: days(14),  created_at: days(-390) },
+  { person_name: "Priya Nair",     doc_type: "Training certificate", filename: "moving_handling.pdf", original_system: "",     size_bytes: 96256,  expires_on: days(38),  created_at: days(-120) },
+  { person_name: "Daniel Frost",   doc_type: "Qualification", filename: "nvq_level5.pdf",        original_system: "",           size_bytes: 512000, expires_on: null,      created_at: days(-95) },
+  { person_name: "Aisha Rahman",   doc_type: "Contract",      filename: "contract_rahman.pdf",   original_system: "RotaMaster", size_bytes: 143360, expires_on: null,      created_at: days(-310) },
+  { person_name: "Joan Petrie",    doc_type: "DBS",           filename: "dbs_petrie.pdf",        original_system: "",           size_bytes: 198656, expires_on: days(72),  created_at: days(-640) },
+  { person_name: "Kwame Adjei",    doc_type: "Right to work", filename: "rtw_adjei.pdf",         original_system: "",           size_bytes: 176128, expires_on: days(-21), created_at: days(-500) }
+];
+sample.staff = [
+  { first_name: "Marie",   last_name: "Okonkwo", job: "Senior care assistant", site: "Lavender Lodge",  status: "employed" },
+  { first_name: "Stephen", last_name: "Wilkes",  job: "Maintenance",           site: "Howe Dell Manor", status: "employed" },
+  { first_name: "Priya",   last_name: "Nair",    job: "Registered nurse",      site: "Eltisley",        status: "employed" },
+  { first_name: "Daniel",  last_name: "Frost",   job: "Deputy manager",        site: "Coach House",     status: "employed" },
+  { first_name: "Aisha",   last_name: "Rahman",  job: "Care assistant",        site: "The Burys",       status: "employed" },
+  { first_name: "Joan",    last_name: "Petrie",  job: "Activities coordinator",site: "Mulberry",        status: "employed" },
+  { first_name: "Kwame",   last_name: "Adjei",   job: "Care assistant",        site: "Baldock",         status: "employed" },
+  { first_name: "Ruth",    last_name: "Kelleher",job: "Housekeeping",          site: "Oakley",          status: "employed" }
+];
+
+function get(path) {
+  return fetch(API + path, { credentials: "same-origin", headers: { "Accept": "application/json" } })
+    .then(function (r) {
+      if (!r.ok) { var e = new Error("http"); e.status = r.status; throw e; }
+      return r.json();
+    });
+}
+
+function stateBox(title, lines) {
+  return '<div class="state"><h3>' + esc(title) + '</h3>' +
+    lines.map(function (l) { return "<p>" + l + "</p>"; }).join("") + "</div>";
+}
+
+function failBox(err, what) {
+  if (err && err.status === 403) {
+    return stateBox("You do not have access to " + what,
+      ["Your account is signed in but has not been given HR access. Ask for the HR role to be added to your account."]);
+  }
+  if (err && err.status === 401) {
+    return stateBox("Please sign in",
+      ['Your session has expired. <a href="/login">Sign in again</a> and come back to this page.']);
+  }
+  if (err && err.status === 503) {
+    return stateBox(what.charAt(0).toUpperCase() + what.slice(1) + " is not ready yet",
+      ["The service is running but has not been configured. Nothing is lost and nothing is broken.",
+       "Whoever set up the system needs to apply the database schema and set the document folder."]);
+  }
+  return stateBox("Could not load " + what,
+    ["Something went wrong reaching the server. Reload the page, and if it keeps happening say when it started."]);
+}
+
+function noticeTable(rows) {
+  if (!rows.length) {
+    return stateBox("No notice periods recorded",
+      ["When someone gives notice, record it above and it will appear here with their last working day."]);
+  }
+  rows = rows.slice().sort(function (a, b) {
+    return String(a.final_working_day || "9999").localeCompare(String(b.final_working_day || "9999"));
+  });
+  var today = new Date().toISOString().slice(0, 10);
+  var out = '<table><caption>' + rows.length + ' recorded, soonest last day first.</caption>' +
+    "<thead><tr><th>Name</th><th>Notice given</th><th>Length</th><th>Final working day</th>" +
+    '<th class="num">Days left</th><th>Reason</th></tr></thead><tbody>';
+  rows.forEach(function (r) {
+    var left = "";
+    var gone = false;
+    if (r.final_working_day) {
+      var n = Math.round((new Date(r.final_working_day) - new Date(today)) / 86400000);
+      gone = n < 0;
+      left = gone ? "left" : String(n);
+    }
+    out += "<tr" + (gone ? ' class="expired"' : "") + "><td>" + esc(r.person_name) + "</td><td>" +
+      ukdate(r.notice_given_date) + "</td><td>" + esc(r.notice_length || "") + "</td><td>" +
+      ukdate(r.final_working_day) + '</td><td class="num">' + left + "</td><td>" + esc(r.reason || "") + "</td></tr>";
+    if (r.notes) {
+      out += '<tr><td colspan="6" style="color:var(--quiet);font-size:13px;padding-top:0;">' + esc(r.notes) + "</td></tr>";
+    }
+  });
+  return out + "</tbody></table>";
+}
+
+function loadNotice() {
+  if (!live) { el("notice-body").innerHTML = noticeTable(sample.notice); return; }
+  el("notice-body").innerHTML = '<p class="lede">Loading</p>';
+  get("/notice-periods").then(function (d) {
+    el("notice-body").innerHTML = noticeTable(d.notice_periods || []);
+  }).catch(function (e) { el("notice-body").innerHTML = failBox(e, "notice periods"); });
+}
+
+el("np-save").addEventListener("click", function () {
+  var msg = el("np-msg");
+  var name = el("np-name").value.trim();
+  var given = el("np-given").value;
+  var reason = el("np-reason").value;
+  if (!name || !given || !reason) { msg.textContent = "Name, date notice given and reason are needed."; return; }
+  if (!live) { msg.textContent = "Sample mode. Nothing was saved."; return; }
+  msg.textContent = "Saving";
+  fetch(API + "/notice-periods", {
+    method: "POST", credentials: "same-origin",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      person_name: name, notice_given_date: given, reason: reason,
+      notice_length: el("np-length").value || null,
+      final_working_day: el("np-final").value || null,
+      notes: el("np-notes").value.trim() || null
+    })
+  }).then(function (r) {
+    if (r.status === 201) {
+      msg.textContent = "Saved.";
+      el("notice-form").querySelectorAll("input, textarea").forEach(function (i) { i.value = ""; });
+      loadNotice();
+      setTimeout(function () { msg.textContent = ""; }, 3000);
+    } else if (r.status === 403) { msg.textContent = "You do not have permission to add records.";
+    } else if (r.status === 503) { msg.textContent = "Not saved. The database is not set up yet.";
+    } else { msg.textContent = "Not saved. Check the dates and try again."; }
+  }).catch(function () { msg.textContent = "Not saved. Could not reach the server."; });
+});
+
+function sizeOf(b) {
+  if (!b && b !== 0) return "";
+  if (b < 1024) return b + " B";
+  if (b < 1048576) return Math.round(b / 1024) + " KB";
+  return (b / 1048576).toFixed(1) + " MB";
+}
+function docsTable(rows) {
+  if (!rows.length) {
+    return stateBox("No documents yet",
+      ["Add a document above. The RotaMaster files belong here, not in Sona."]);
+  }
+  var out = '<table><caption>' + rows.length + " held.</caption>" +
+    "<thead><tr><th>Person</th><th>Type</th><th>File</th><th>Came from</th>" +
+    '<th class="num">Size</th><th>Expires</th><th></th></tr></thead><tbody>';
+  rows.forEach(function (r) {
+    var exp = r.expires_on ? ukdate(r.expires_on) : "";
+    var gone = r.expires_on && r.expires_on < new Date().toISOString().slice(0, 10);
+    out += "<tr><td>" + esc(r.person_name) + "</td><td>" + esc(r.doc_type) + "</td><td>" +
+      esc(r.filename) + "</td><td>" + esc(r.original_system || "Nouvita") +
+      '</td><td class="num">' + sizeOf(r.size_bytes) + "</td>" +
+      '<td' + (gone ? ' class="expired"' : "") + ">" + exp + (gone ? " (expired)" : "") + "</td><td>" +
+      (live && r.id ? '<a href="' + API + "/documents/" + esc(r.id) + '/download">Open</a>' : "") +
+      "</td></tr>";
+  });
+  return out + "</tbody></table>";
+}
+function loadDocs() {
+  if (!live) { el("docs-body").innerHTML = docsTable(sample.docs); return; }
+  el("docs-body").innerHTML = '<p class="lede">Loading</p>';
+  get("/documents").then(function (d) {
+    el("docs-body").innerHTML = docsTable(d.documents || []);
+  }).catch(function (e) { el("docs-body").innerHTML = failBox(e, "documents"); });
+}
+
+el("dc-save").addEventListener("click", function () {
+  var msg = el("dc-msg");
+  var f = el("dc-file").files[0];
+  var name = el("dc-name").value.trim();
+  var type = el("dc-type").value;
+  if (!name || !type || !f) { msg.textContent = "Person, document type and a file are needed."; return; }
+  if (!live) { msg.textContent = "Sample mode. Nothing was uploaded."; return; }
+  var fd = new FormData();
+  fd.append("file", f);
+  fd.append("person_name", name);
+  fd.append("doc_type", type);
+  if (el("dc-expiry").value) fd.append("expires_on", el("dc-expiry").value);
+  if (el("dc-origin").value) fd.append("original_system", el("dc-origin").value);
+  msg.textContent = "Uploading";
+  fetch(API + "/documents", { method: "POST", credentials: "same-origin", body: fd })
+    .then(function (r) {
+      if (r.status === 201) {
+        msg.textContent = "Uploaded.";
+        el("dc-file").value = ""; el("dc-name").value = "";
+        loadDocs(); loadCompliance();
+        setTimeout(function () { msg.textContent = ""; }, 3000);
+      } else if (r.status === 415) { msg.textContent = "That file type is not accepted.";
+      } else if (r.status === 413) { msg.textContent = "That file is too large. The limit is 25 MB.";
+      } else if (r.status === 403) { msg.textContent = "You do not have permission to upload.";
+      } else if (r.status === 503) { msg.textContent = "Not uploaded. Document storage is not set up yet.";
+      } else { msg.textContent = "Not uploaded. Try again."; }
+    }).catch(function () { msg.textContent = "Not uploaded. Could not reach the server."; });
+});
+
+function horizon(rows) {
+  var span = 90;
+  var withDates = rows.filter(function (r) { return r.expires_on; });
+  if (!withDates.length) {
+    return stateBox("Nothing expiring",
+      ["No document held expires in the next ninety days. This fills in as documents with expiry dates are added."]);
+  }
+  var today = new Date(); today.setHours(0, 0, 0, 0);
+  var earliest = 0;
+  withDates.forEach(function (r) {
+    var n = Math.round((new Date(r.expires_on) - today) / 86400000);
+    if (n < earliest) earliest = n;
+  });
+  var from = Math.min(earliest, 0), to = span;
+  var total = to - from;
+  function pct(n) { return ((n - from) / total) * 100; }
+
+  var h = '<div class="horizon"><div style="font-size:13px;color:var(--quiet);">Each mark is one document. ' +
+    "Red has already expired.</div><div class=\"horizon-scale\">";
+  h += '<div class="today" style="left:' + pct(0) + '%"><span>today</span></div>';
+  [30, 60, 90].forEach(function (d) {
+    h += '<div class="tick" style="left:' + pct(d) + '%"><span>' + d + "d</span></div>";
+  });
+  var lanes = 7;
+  withDates.forEach(function (r, i) {
+    var n = Math.round((new Date(r.expires_on) - today) / 86400000);
+    if (n > span) return;
+    var top = 6 + (i % lanes) * 11;
+    h += '<div class="pip' + (n < 0 ? " past" : "") + '" style="left:' + pct(n) + "%;top:" + top +
+      'px" title="' + esc(r.person_name || r.name) + ", " + esc(r.doc_type) + '"></div>';
+  });
+  h += '</div><div class="horizon-legend">Scale runs from ' + (from < 0 ? Math.abs(from) + " days overdue" : "today") +
+    " to ninety days ahead.</div></div>";
+
+  var sorted = withDates.slice().sort(function (a, b) { return String(a.expires_on).localeCompare(String(b.expires_on)); });
+  var t = "<table><thead><tr><th>Person</th><th>Document</th><th>Expires</th>" +
+    '<th class="num">Days</th></tr></thead><tbody>';
+  sorted.forEach(function (r) {
+    var n = Math.round((new Date(r.expires_on) - today) / 86400000);
+    if (n > span) return;
+    t += "<tr" + (n < 0 ? ' class="expired"' : "") + "><td>" + esc(r.person_name || r.name) + "</td><td>" +
+      esc(r.doc_type) + "</td><td>" + ukdate(r.expires_on) + '</td><td class="num">' +
+      (n < 0 ? Math.abs(n) + " overdue" : n) + "</td></tr>";
+  });
+  return h + t + "</tbody></table>";
+}
+function loadCompliance() {
+  if (!live) { el("compliance-body").innerHTML = horizon(sample.docs); return; }
+  el("compliance-body").innerHTML = '<p class="lede">Loading</p>';
+  get("/documents/expiring").then(function (d) {
+    el("compliance-body").innerHTML = horizon(d.documents || []);
+  }).catch(function (e) { el("compliance-body").innerHTML = failBox(e, "compliance"); });
+}
+
+var staffCache = [];
+function staffTable(rows) {
+  var q = el("staff-q").value.trim().toLowerCase();
+  var site = el("staff-site").value;
+  var f = rows.filter(function (r) {
+    var nm = ((r.first_name || "") + " " + (r.last_name || "")).toLowerCase();
+    return (!q || nm.indexOf(q) !== -1) && (!site || r.site === site);
+  });
+  if (!f.length) {
+    return stateBox("No one matches", ["Try a shorter search, or clear the site filter."]);
+  }
+  var out = "<table><caption>" + f.length + " of " + rows.length + " shown.</caption>" +
+    "<thead><tr><th>Name</th><th>Job</th><th>Site</th></tr></thead><tbody>";
+  f.forEach(function (r) {
+    out += "<tr><td>" + esc(r.last_name) + ", " + esc(r.first_name) + "</td><td>" +
+      esc(r.job || "") + "</td><td>" + esc(r.site || "") + "</td></tr>";
+  });
+  return out + "</tbody></table>";
+}
+function fillSites(rows) {
+  var s = el("staff-site");
+  var seen = {};
+  rows.forEach(function (r) { if (r.site) seen[r.site] = 1; });
+  Object.keys(seen).sort().forEach(function (k) {
+    var o = document.createElement("option"); o.value = k; o.textContent = k; s.appendChild(o);
+  });
+}
+function loadStaff() {
+  if (!live) { staffCache = sample.staff; fillSites(staffCache); el("staff-body").innerHTML = staffTable(staffCache); return; }
+  el("staff-body").innerHTML = '<p class="lede">Loading</p>';
+  get("/staff").then(function (d) {
+    staffCache = d.staff || [];
+    fillSites(staffCache);
+    el("staff-body").innerHTML = staffTable(staffCache);
+  }).catch(function (e) { el("staff-body").innerHTML = failBox(e, "the staff list"); });
+}
+el("staff-q").addEventListener("input", function () { el("staff-body").innerHTML = staffTable(staffCache); });
+el("staff-site").addEventListener("change", function () { el("staff-body").innerHTML = staffTable(staffCache); });
+
+var loaded = {};
+function show(name) {
+  ["notice", "docs", "compliance", "staff"].forEach(function (n) {
+    el("panel-" + n).hidden = (n !== name);
+  });
+  document.querySelectorAll("nav.tabs button").forEach(function (b) {
+    b.setAttribute("aria-selected", String(b.dataset.tab === name));
+  });
+  if (!loaded[name]) {
+    loaded[name] = true;
+    ({ notice: loadNotice, docs: loadDocs, compliance: loadCompliance, staff: loadStaff })[name]();
+  }
+}
+document.querySelectorAll("nav.tabs button").forEach(function (b) {
+  b.addEventListener("click", function () { show(b.dataset.tab); });
+});
+
+function banner(html, alert) {
+  el("banner").innerHTML = '<div class="notice' + (alert ? " alert" : "") + '">' + html + "</div>";
+}
+function startSample(why) {
+  live = false;
+  el("who").textContent = "Sample mode";
+  el("foot-mode").textContent = "Sample mode. Nothing shown here is real and nothing can be saved.";
+  banner("<strong>This is a preview with made up data.</strong> It is here so the fields and layout " +
+    "can be checked before anything real is loaded. Every name, date and document below is invented. " +
+    "Nothing you type will be saved. " + (why || ""));
+  ["np-save", "dc-save"].forEach(function (i) { el(i).disabled = true; });
+  show("notice");
+}
+function start() {
+  fetch(API + "/whoami", { credentials: "same-origin", headers: { "Accept": "application/json" } })
+    .then(function (r) {
+      if (r.status === 401) { startSample('You are not signed in. <a href="/login">Sign in</a> to see real records.'); return; }
+      if (!r.ok) { startSample(""); return; }
+      return r.json().then(function (d) {
+        live = true;
+        caps = d.capabilities || [];
+        actor = d.actor || "";
+        el("who").innerHTML = "Signed in as <strong>" + esc(actor) + "</strong>";
+        el("foot-mode").textContent = "Live data. Every record opened here is logged.";
+        if (!can("write")) {
+          ["np-save", "dc-save"].forEach(function (i) { el(i).disabled = true; });
+          banner("You can view records but not add or change them.");
+        } else {
+          el("banner").innerHTML = "";
+        }
+        show("notice");
+      });
+    })
+    .catch(function () { startSample(""); });
+}
+start();
+</script>
+</body>
+</html>
